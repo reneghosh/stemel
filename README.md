@@ -30,5 +30,11 @@ SteMeL makes it easy to write long sequences of melodies, chords, and counterpoi
 |0|-|0|-|0|-|0|-|0|-|0|-|0|-|0|-|
 ```
 
+<table>
+<tr>
+<td colspan=2>O</td><td></td><td>0</td>
+</tr>
+</table>
+
 You'd write: `0,,0,,0,,0,,0,,0,,0,,0,`. This means, _play note 0, then move to the next step, then play nothing,
 then move to the next step and play 0 again, etc._
