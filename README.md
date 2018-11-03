@@ -28,4 +28,6 @@ SteMeL makes it easy to write long sequences of melodies. You can write chords. 
 
 | SteMeL | Sequencer | Explanation |
 | -------| ----------| ------------|
-| `0,,0,,0,,0,,0,,0,,0,,0,` | <table><tr><td colspan="2" style="background-color:red">0</td><td></td><td bgcolor="red">0</td></tr></table> | play note 0, then move to the next step, then play nothing, then move to the next step and play 0 again, etc. |
+| `0,,0,,0,,0,,0,,0,,0,,0,` | ```
+| 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | | 0 | 
+```| play note 0, then move to the next step, then play nothing, then move to the next step and play 0 again, etc. |
