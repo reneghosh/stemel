@@ -29,7 +29,7 @@ SteMeL makes it easy to write long sequences of melodies. You can write chords. 
 
 | SteMeL | Explanation |
 | -------| ------------|
-| `f50 l2 0,,0,,` | play midi note 50 twice in half-notes with a half-note rest between each note |
+| `f50 l2 0,,0,` | play midi note 50 twice in half-notes with a half-note rest between each note |
 | `0/4` | play a chord with notes 0 and 4 |
 | `0_4/7,,,` | play a chord with notes 0 and 7, with note 0 sounding for 4 beats and note 7 sounding only one beat |
 | `0>5,7<5` | play note 0 very loud (5 increments of volume), then note 5 softly (5 decrements of volume) |
