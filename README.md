@@ -4,6 +4,8 @@ A music notation format inspired by step sequencers and [MML](https://en.wikiped
 
 Its purpose is to store a musical score in format that's both human readable and usable in code.
 
+SteMeL makes it easy to write long sequences of melodies, chords, and counterpoint.
+
 ## Syntax
 
 | what you write | what it means |
