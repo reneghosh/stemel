@@ -2,9 +2,9 @@
 
 A music notation format inspired by step sequencers and [MML](https://en.wikipedia.org/wiki/Music_Macro_Language).
 
-Its purpose is to store a musical score in format that's both human readable and usable in code.
+Write music in a format both **human readable** and **code-exploitable**.
 
-SteMeL makes it easy to write long sequences of melodies, chords, and counterpoint.
+SteMeL makes it easy to write long sequences of melodies. You can write chords. You can counterpoint.
 
 ## Syntax
 
@@ -28,4 +28,4 @@ SteMeL makes it easy to write long sequences of melodies, chords, and counterpoi
 
 | SteMeL | Sequencer | Explanation |
 | -------| ----------| ------------|
-| `0,,0,,0,,0,,0,,0,,0,,0,` | <table><tr><td colspan="2" background-color="red">0</td><td></td><td bgcolor="red">0</td></tr></table> | play note 0, then move to the next step, then play nothing, then move to the next step and play 0 again, etc. |
+| `0,,0,,0,,0,,0,,0,,0,,0,` | <table><tr><td colspan="2" style="background-color:red">0</td><td></td><td bgcolor="red">0</td></tr></table> | play note 0, then move to the next step, then play nothing, then move to the next step and play 0 again, etc. |
