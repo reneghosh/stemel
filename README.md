@@ -2,9 +2,9 @@
 
 A music notation format inspired by step sequencers and [MML](https://en.wikipedia.org/wiki/Music_Macro_Language).
 
-Its purpose is to store a musical score in format that's both human readable and usable in code.
+Write music in a format both **human readable** and **code-exploitable**.
 
-SteMeL makes it easy to write long sequences of melodies, chords, and counterpoint.
+SteMeL makes it easy to write long sequences of melodies. You can write chords. You can counterpoint.
 
 ## Syntax
 
@@ -15,26 +15,26 @@ SteMeL makes it easy to write long sequences of melodies, chords, and counterpoi
 | `<n>_<m>`        | play note n over m steps |
 | `<n>/<o>`        | play notes n and o at the same time |
 | `,`              | move to next step |
-| `f50`            | play notes relative to midi note 50 |
-| `a1.1`           | change amplitudes by multiplying/dividing by factor 1.1 |
-| `l<n>`           | play 1/<n> notes, where n is 1 for full notes, 2 for half notes, 0.25, etc.|
-| `l1`             | play full notes |
-| `>`              | increase volume of current note |
-| `>>`             | increase volume of current note twice |
-| `>n`             | increase vomume of current note n times |
-| `<`              | decrease volume of current note |
+| `,*n`              | move n steps forward |
+| `f50`            | play subsequent notes relative to midi note 50 |
+| `l<n>`           | make each step of 1/<n> note length, where n is 1 for full notes, 2 for half notes, 0.25, etc.|
+| `>`              | increase volume of current note by one increment |
+| `>>`             | increase volume of current note by two increments |
+| `a1.1`           | amplitude change increment: change subsequent note amplitudes by multiplying/dividing by factor 1.1 |
+| `>n`             | increase volume of current note by n increments |
+| `<`              | decrease volume of current note by one increment |
+| `<<`              | decrease volume of current note by two increments |     
+| `<n`              | decrease volume of current note by n increments |
 
 ## SteMeL by example
 
-```
-|0|-|0|-|0|-|0|-|0|-|0|-|0|-|0|-|
-```
+| SteMeL | Explanation |
+| -------| ------------|
+| `f50 l2 0,,0,` | play midi note 50 twice in half-notes with a half-note rest between each note |
+| `0/4` | play a chord with notes 0 and 4 |
+| `0_4/7,,,` | play a chord with notes 0 and 7, with note 0 sounding for 4 beats and note 7 sounding only one beat |
+| `0>5,7<5` | play note 0 very loud (5 increments of volume), then note 7 softly (5 decrements of volume) |
+| `0>>>>>,7<<<<<` | same as above |
+| `0_8,,,,,,,` | play note 0 over 8 beats |
+| `0_8,*7` | save as above |
 
-<table>
-<tr>
-<td colspan=2>O</td><td></td><td>0</td>
-</tr>
-</table>
-
-You'd write: `0,,0,,0,,0,,0,,0,,0,,0,`. This means, _play note 0, then move to the next step, then play nothing,
-then move to the next step and play 0 again, etc._
