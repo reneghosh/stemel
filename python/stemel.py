@@ -26,6 +26,15 @@ def parse(note_str):
                 sus_list.append(1)
             while len(notes_list)>len(amp_list):
                 amp_list.append(1)
+            cursor2 = cursor + 1
+            number_skips = 1
+            if (cursor2<length) and (note_line[cursor2]=='*'):
+                cursor+=2
+                cursor2 = cursor+1
+                while (cursor2<length) and (note_line[cursor2] in int_chars):
+                    cursor2+=1
+                number_skips = int(note_line[cursor:cursor2])
+                cursor = cursor2
             # add a note
             if len(notes_list)>0:
                 notes_tuple = ()
@@ -40,10 +49,10 @@ def parse(note_str):
                 notes_array.append(notes_tuple)
                 sus_array.append(sus_tuple)
                 amp_array.append(amp_tuple)
-                dur_array.append(time_segment)
+                dur_array.append(time_segment*number_skips)
             else:
                 if len(dur_array)>0:
-                    dur_array[len(dur_array)-1]+=time_segment
+                    dur_array[len(dur_array)-1]+=time_segment*(number_skips)
             # print("adding notes %s" % notes_list)
             # print("adding sus %s" % sus_list)
             notes_list = []
@@ -147,49 +156,51 @@ def parse(note_str):
         else:
             cursor += 1
     return (notes_array, dur_array, sus_array, amp_array)
-
-    
 from FoxDot.lib import *
 Scale.default="major"
 Clock.bpm=100
-Master().room=0.5
-Master().mix=0.3
 def sendto(ins, str):
     (notes_array, dur_array, sus_array, amp_array)=parse(str)
     ins.pitch = notes_array
     ins.sus = sus_array
     ins.dur=dur_array
     ins.amp=amp_array
+p1.stop()
+p2 >> space()
+sendto(p2,"0_8,*8 0/4_8,*8 0/3_8,*8 0_8/3,*7")
+p3 >> charm()
+sendto(p3, "0_16,*15")
+Master().room=0.5
+Master().mix=0.3
+# print(parse("0/4_4,*8"))
 
-b1 >> bass(lpf=160, formant=9)
-sendto(b1,"f0 l2 0>>,0/-7/7<<,0>>,0<</7")
+p2.stop()
+p3.stop()
+b1 >> bass(lpf=linvar([160,500],32), formant=2)
+sendto(b1,"f0 l2 0_4/4_,,0,0,0_4/5_,,0,0,0_4/6_,,0,0,0_4/5_,,0,0")
+p1 >> sitar(shape=0, drive=0.4, bpf=1200, formant=3)
+sendto(p1,"l2 2_9>5,*9 4,4,2,2<,1,1<,0,2_9,*9 4,4,2,2,1,1,0")
+d1 >> play("x-o-", sample=1, amp=1)
 
-sendto(b1,"f0 l2 0/0,7>>>,0,4/0>>>/14")
+sendto(b1,"f1 l2 0_4/4_,,0,0,0_4/5_,,0,0,0_4/4_,,0,0,0_4/5_,,0,0")
+sendto(p1,"l2 1_9>5,*9 4,4,2,2<,1,1<,0,1_9,*9 4,4,2,2,1,1,0")
+d1 >> play("x-o-", sample=4)
 
-b1.solo(0)
+sendto(b1,"f0 l2 0_4/4_,,0,0,0_4/5_,,0,0,f1 0_4/5_,,0,0,0_4/4_,,0,0")
+sendto(p1,"f0 l2 9_7,*6 6,5_7,*8 -5")
+d1 >> play("x-o-", sample=3)
 
-p1 >> pluck(shape=0, drive=0.4, bpf=1200, formant=3)
-sendto(p1,"f0 l2 ,0<</7_++,0__+/7<<<<")
+sendto(b1,"f0 l2 0_4/4_,,0,0,0_4/5_,,0,0,0_4/6_,,0,0,0_4/5_,,0,0")
+sendto(p1,"f0 l2 9_32,*31")
+d1 >> play("xOO-XoOt", sample=6)
 
-sendto(p1,"f0 l2 7_4/0_8,,12,,7,5,3,5_,,7_3,-12,-10,0")
+sendto(b1,"f2 l2 0_4/4_,,0,0,0_4/5_,,0,0,0_4/6_,,0,0,0_4/5_,,0,0")
+sendto(p1,"f7 l2 2_9>5,*9 4,4,2,2<,1,1<,0,2_9,*9 4,4,2,2,1,1,0")
+d1 >> play("[--]X-x", sample=8)
 
-p1.solo()
+sendto(b1,"f3 l2 0_4/4_,,0,0,0_4/5_,,0,0,0_4/6_,,0,0,0_4/5_,,0,0")
+sendto(p1,"l2 0_4,*4 1_4,*4 0_8/6_8,*7")
+d1 >> play("X-o[----]", sample=4)
 
-d1 >> play("x-o-", sample=1)
-
-d1 >> play("xxo[--]", sample=1)
-
-d1 >> play("-X[--]X", sample=1)
-
-d1 >> play("[-xxx]", sample=1)
-
-d1.solo()
-
-d1.solo()
-
-
-p2 >> ambi(chop=0, oct=3)
-sendto(p2,"0/4/7_____,4,4/0,4/0,4")
-
-sendto(p2,"5_,,3_,,0_8,,,,,,,")
-p2.solo()
+p2 >> space()
+sendto(p2,"0_8,*8 0/4_8,*8 0/3_8,*8 0_8/3,*7")
