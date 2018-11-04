@@ -15,6 +15,7 @@ SteMeL makes it easy to write long sequences of melodies. You can write chords. 
 | `<n>_<m>`        | play note n over m steps |
 | `<n>/<o>`        | play notes n and o at the same time |
 | `,`              | move to next step |
+| `,*n`              | move n steps forward |
 | `f50`            | play subsequent notes relative to midi note 50 |
 | `l<n>`           | make each step of 1/<n> note length, where n is 1 for full notes, 2 for half notes, 0.25, etc.|
 | `>`              | increase volume of current note by one increment |
@@ -34,3 +35,6 @@ SteMeL makes it easy to write long sequences of melodies. You can write chords. 
 | `0_4/7,,,` | play a chord with notes 0 and 7, with note 0 sounding for 4 beats and note 7 sounding only one beat |
 | `0>5,7<5` | play note 0 very loud (5 increments of volume), then note 5 softly (5 decrements of volume) |
 | `0>>>>>,7<<<<<` | same as above |
+| `0_8,,,,,,,` | play note 0 over 8 beats |
+| `0_8,*7` | save as above |
+
