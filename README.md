@@ -1,5 +1,9 @@
 # SteMeL
 
+**NOTE**: SteMeL is very much a work in progress at the moment as the syntax and scope are changing. I'm not
+yet sure what form it will take when I release it and this repository might even contain nothing but the spec, should
+there we different implementations.
+
 A music notation format inspired by step sequencers and [MML](https://en.wikipedia.org/wiki/Music_Macro_Language).
 
 Write music in a format both **human readable** and **code-exploitable**.
