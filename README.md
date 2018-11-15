@@ -5,36 +5,51 @@ A music notation format inspired by step sequencers and [MML](https://en.wikiped
 Write music in a format both **human readable** and **code-exploitable**.
 
 SteMeL makes it easy to write long sequences of melodies. You can write chords. You can counterpoint.
+teMeL User Guide
 
-## Syntax
+SteMel is a musical notation format inspired by step sequencers that supports polyphony and encourages code reeuse.
 
-| what you write | what it means |
-| ---------------| ------------- |
-| `<n>`            | play note n   |
-| `<n>_`           | play note n over two steps |
-| `<n>_<m>`        | play note n over m steps |
-| `<n> <o>`        | play notes n and o siumultaneously |
-| `,`              | move to next step |
-| `,*n`              | move n steps forward |
-| `f50`            | play subsequent notes relative to midi note 50 |
-| `l<n>`           | make each step of 1/<n> note length, where n is 1 for full notes, 2 for half notes, 0.25, etc.|
-| `>`              | increase volume of current note by one increment |
-| `>>`             | increase volume of current note by two increments |
-| `a1.1`           | amplitude change increment: change subsequent note amplitudes by multiplying/dividing by factor 1.1 |
-| `>n`             | increase volume of current note by n increments |
-| `<`              | decrease volume of current note by one increment |
-| `<<`              | decrease volume of current note by two increments |     
-| `<n`              | decrease volume of current note by n increments |
+## Directives, Commands, Variables
 
-## SteMeL by example
+A SteMeL flow is made of constructs separated by spaces. 
 
-| SteMeL | Explanation |
-| -------| ------------|
-| `f50 l2 0,,0,` | play midi note 50 twice in half-notes with a half-note rest between each note |
-| `0 4` | play a chord with notes 0 and 4 |
-| `0_4 7,,,` | play a chord with notes 0 and 7, with note 0 sounding for 4 beats and note 7 sounding only one beat |
-| `0>5,7<5` | play note 0 very loud (5 increments of volume), then note 7 softly (5 decrements of volume) |
-| `0>>>>>,7<<<<<` | same as above |
-| `0_8,,,,,,,` | play note 0 over 8 beats |
-| `0_8,*7` | save as above |
+SteMeL constructs are either  **directives**,. **commands** or  **variables**.
 
+**Directives** Do not produce sound, but instead inform commands. For instance, the frequency directive `f50` informs the interpreter that all subsequent notes will be expressed in a number of half-tones relative to midi note `50`. the `,` directive tells the interpreter to move forward one time segment.
+
+**Commands** produce sound. A command starts with a number  representing a note's pitch. This number represents a number of half-tones above a base frequency. Notes are generally integer (whole) numbers, but they don't _have_ to be: to produce a pitch that's slightly off-key, a note can be expressed as a frequency with decimals after the 0. For instance, `10` or `10.1` are both valid commands.
+
+  **Variables** are used to store series of notes for later reuse, to promote terser code and make it easier to modify them in one place while propagating them across the entire score. To store a variable, a series of notes are encloded in parentheses `(` `)` and given a variable name. They are used by referering to them by a `$` reference.
+
+  ## Directives
+
+Directives are expressed by a letter followed by a number.
+   
+| Directive | Meaning | Example |
+| ----------- | ---------- | ------------|
+| `f` or  `F`   | Change base pitch of current line | `f50` |
+| `a` or `A`.  | Change amplification factor for note volume increments/decrements | `a1.1`. |
+| `l` or `L`.   | Change base note length. Note that the note length will be 1/l, so a higher value indicates a shorter note length | `l4` (quarter-note), `l0.25` (full note) |
+| `,` or. `;` | Move interpreter forward one time segment. Without this, all notes will be played simultaneously! | `,` (move forward one segment), `,4` (move forward 4 segments) | 
+
+## Commands
+
+A command is a note pitch. A command is expressed by a number representing the pitch, followed by a series of optional modifiers for length and volume
+
+### Command modifiers
+
+| Modifier |Meaning | Example |
+|----------- |-----------| ----------- |
+| `_` | Note length | `0_4`
+| `>` | Increase amplitude by one increment | `0>` (one increment), `0>4` (four increments) |
+| `<` | Decrease amplitude by one increment | `0<` (one increment), `0<4` (four increments) |
+
+## Bars and loops
+
+
+
+## Variables
+
+Variables are stored series of notes that can be resused. A variable is defined by enclosing a series of notes in parentheses and then giving the variable a name by prefixing it with a colon `:`. The variable can then be used in following constructs by expressing the variable name prefixed with `$`.
+
+Example: ` ( 0 , 4 , 5 ) :pattern1 $pattern1 $pattern1`
