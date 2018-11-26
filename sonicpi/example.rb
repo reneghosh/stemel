@@ -92,37 +92,54 @@ end
 
 # play_notes("AAA/BBB/CCC")
 
-live_loop :tick do
+in_thread(name: :ticker) do
+  loop do
     cue :tick
-    sleep 0.125/8
+    sleep 1
+  end
 end
 
 
-# live_loop :lead1 do
-#   loop do
-#   sync :tick
-#     with_fx :echo, mix: 0.3, phase: 0.0, amp: 0.8 do
-#       use_synth :beep
-#       play_notes "> 5 7 0 5 / 0 --- 0 ---", step_size=0.25, shift=0
-#     end
-#   end
-# end
-
-
-p1 = "> 5 4 5 4 5 5 7 0 "
-live_loop :lead2 do
+in_thread do
   sync :tick
-    with_fx :reverb, mix: 0.1, amp: 0.4 do
-      use_synth :pluck
+  live_loop :lead1 do
+    with_fx :echo, mix: 0.3, phase: 0.0, amp: 0.8 do
+      use_synth :pretty_bell
+      play_notes "> 5 7 0 5 / 0 --- ", step_size=0.25, shift=0
+    end
+  end
+end
+
+
+p1 = ">> 5 4 5 4 5 5 7 0 "
+in_thread do
+  sync :tick
+  live_loop :lead2 do
+    with_fx :reverb, mix: 0.6, amp: 0.4 do
+      use_synth :beep
       play_notes p1, step_size=0.25, shift=0
     end
+  end
 end
 
 
-live_loop :bass do
+in_thread do
   sync :tick
-  with_fx :reverb, mix: 0.3, phase: 0.25 do
-    use_synth :fm
-    play_notes "> 0 - 0 0 ", step_size=0.125, shift=0
+  live_loop :drum do
+    with_fx :reverb, mix: 0.6, amp: 0.1, cutoff_note: 100 do
+      use_synth :pnoise
+      play_notes "0 72 24 * 0 * 36 *", step_size=0.125, shift=0
+    end
+  end
+end
+
+
+in_thread do
+  sync :tick
+  live_loop :bass do
+    with_fx :reverb, mix: 0.3, phase: 0.25 do
+      use_synth :fm
+      play_notes "> 0 - 0 0 ", step_size=0.125, shift=0
+    end
   end
 end
