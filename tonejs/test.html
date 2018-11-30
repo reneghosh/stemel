@@ -1,0 +1,43 @@
+<html>
+    <head>
+      <script src="Tone.min.js"></script>
+      <script src="stemel.js"></script>
+<script>
+
+sequencer = {};
+players = {};
+buffer2Sequencer(sequencer, "bass", s2buffer("0 ---"), 40);
+buffer2Sequencer(sequencer, "pluck", s2buffer(">> 0 7 5 7 9 7 10 0 "), 20);
+var bpm = 100;
+// var synth = new Tone.PolySynth(4,Tone.Synth).toMaster();
+var synth = new Tone.Synth().toMaster();
+var synth2 = new Tone.Synth().toMaster();
+players["bass"] = function(note, duration, amplitude, time){
+  synth.triggerAttackRelease(Tone.Midi(note),duration*0.75*15.0/bpm,time);
+}
+players["pluck"] = function(note, duration, amplitude, time){
+  synth2.triggerAttackRelease(Tone.Midi(note),duration*0.75*15.0/bpm,time);
+}
+for (instrument in sequencer){
+  var step = 15.0/bpm;
+  var start = Tone.now();
+  if (instrument in players) {
+    var track = sequencer[instrument];
+    for (var i=0;i<track.length;i++){
+      var notes = track[i];
+      for (var j=0;j<notes.length;j++){
+        var note = notes[j];
+        if (note.note>0) {
+          players[instrument](note.note, note.duration, note.amplitude,start+(i*step));
+        }
+      }
+    }
+  }
+}
+
+
+</script>
+    </head>
+    <body>
+    </body>
+</html>

@@ -25,8 +25,7 @@ def make_notes(note_s)
       end
     when /^\*+?$/
       note.size().times do
-        vals[counter]=Struct::Note::new(-1, 1, amplitude, 0)
-        counter += 1
+        vals.append(Struct::Note::new(-1, 1, amplitude, 0))
       end
     when '/'
       vals = []
@@ -58,7 +57,6 @@ end
 def add_pattern(times, instrument, pattern)
   notes = make_notes(pattern)
   buffer = Sequencer[instrument]
-  puts buffer
   length = notes.max{ |a,b| a.size() <=> b.size()}.size()
   unless buffer
     buffer = []
@@ -78,7 +76,6 @@ def add_pattern(times, instrument, pattern)
       counter += 1
     end
   end
-  puts Sequencer.to_s
 end
 
 Sequencer = Hash.new()
@@ -104,23 +101,42 @@ end
 # end
 
 # add_pattern(2, :bass, "> 0 0 0 0")
-add_pattern(2, :bass, "0 0")
-add_pattern(1, :bass, "0 - 0 0")
-add_pattern(1, :pluck, ">> 4 5 7 0 7 0 5 5 7 / 10 0 10")
+add_pattern(2, :bass, "> 0 0 * 0")
+# add_pattern(1, :bass, "> 0 - 0 0")
+# add_pattern(1, :pluck, ">> 4 5 7 0 7 0 5 5 7 / 10 0 10")
+# add_pattern(1, :kick, "0 - 0 - ")
+# add_pattern(1, :snare, "0 12 - 72 ")
 
 
-live_loop :bass do
-  # sync :tick
-  with_seq :bass do |value, duration, amplitude|
-    use_synth :beep
-    play value, release:duration, amp:amplitude
-  end
-end
-
-live_loop :pluck do
-  # sync :tick
-  with_seq :pluck do |value, duration, amplitude|
-    use_synth :pluck
-    play value, sustain:duration*0.75, amp:amplitude, release:duration*0.75
-  end
-end
+#   live_loop :bass do
+#     with_seq :bass do |value, duration, amplitude|
+#       use_synth :blade
+#       with_fx :reverb, mix: 0.5 do |rev|
+#         with_fx :wobble do
+#           play value, release:duration, amp:amplitude
+#         end
+#       end
+#   end
+#
+#   live_loop :pluck do
+#     with_seq :pluck do |value, duration, amplitude|
+#       with_fx :wobble, phase: 1 do |wob|
+#         use_synth :pulse
+#           play value, sustain:duration*0.75, amp:amplitude, release:duration*0.5
+#         end
+#       end
+#   end
+#
+#   live_loop :drum1 do
+#     with_seq :kick do |value, duration, amplitude|
+#       use_synth :pulse
+#         sample :drum_heavy_kick
+#       end
+#   end
+#   live_loop :drum2 do
+#     with_seq :snare do |value, duration, amplitude|
+#       use_synth :pulse
+#         sample :drum_cymbal_closed
+#       end
+#   end
+# end

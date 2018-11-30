@@ -8,7 +8,7 @@ var carry = /^\-+$/;
 var repeat = /^r\d+$/;
 var ampValue = /^a\d+\.*\d*$/;
 
-function parseNotes(pattern) {
+function s2notes(pattern) {
     var lines = pattern.split("/");
     var scoreLines = [];
     var lineCounter = 0;
@@ -16,14 +16,14 @@ function parseNotes(pattern) {
     var amplitude = 1.0
     for (var i=0;i<lines.length;i++){
         var line = lines[i].trim();
-        var scoreLine = [];        
+        var scoreLine = [];
         var counter = 0
         words = line.split(" ");
         for (var j=0;j<words.length;j++){
             var word = words[j];
             if (float.test(word)) {
                 //number
-                scoreLine[counter]={note:parseFloat(word)+octave*12,duration:1,amplitude:amplitude};
+                scoreLine[counter]={note:parseFloat(word)+(octave*12),duration:1,amplitude:amplitude};
                 counter++;
             } else if (ampValue.test(word)) {
                 amplitude = parseFloat(word.substring(1,word.length));
@@ -64,86 +64,45 @@ function parseNotes(pattern) {
         }
         if (scoreLine.length>0){
             scoreLines[lineCounter]=scoreLine;
-            lineCounter++;            
+            lineCounter++;
         }
     }
     return scoreLines;
 }
 
-
-function makeScore(program){
-    var score = {};
-    for (var instrument in program){
-        pattern_holder = {};
-        score[instrument]= pattern_holder;
-        for (var pattern in program[instrument]){
-            var parsedLine = parseNotes(program[instrument][pattern]);
-            pattern_holder[pattern]=parsedLine;
-        }
+function notes2buffer(notes){
+  var no_voices = notes.length;
+  var buffer_length = notes.map(a => a.length).reduce((a,b) => Math.max(a,b));
+  buffer = [];
+  for (var i=0;i<buffer_length;i++) {
+    line = []
+    for (var j=0;j<no_voices;j++){
+      line.push(notes[j][i % notes[j].length]);
     }
-    return score;
+    buffer.push(line);
+  }
+  return buffer;
 }
 
-function parsePatterns(pattern){
-    var sequence = [];
-    var counter = 0;
-    var words = pattern.split(" ");
-    for (var i=0;i<words.length;i++){
-        sequence[counter]=words[i].trim();
-        counter++;
-    }
-    return sequence;
+function buffer2Sequencer(sequencer, instrument, buffer, numberTimes=1, clear=false){
+  var track;
+  if (clear || !(instrument in sequencer)) {
+    track = [];
+  } else {
+    track = sequencer[instrument];
+  }
+  for (var i=0;i<numberTimes;i++){
+    track = track.concat(buffer);
+  }
+  sequencer[instrument] = track;
+  return sequencer;
 }
-function makeSequence(plan){
-    sequence={};
-    for (var instrument in plan){
-        pattern_sequence = plan[instrument];
-        sequence[instrument]=parsePatterns(pattern_sequence);
-    }
-    return sequence;
+function s2buffer(score){
+  return notes2buffer(s2notes(score));
 }
-
-var patterns = {
-    base: {
-        p1: "0 0 5 0",
-        p2: "0 5 7 0 0 0 -- - a0.5 5 a1.0 > 0 / 0 5 >> 8 << * **"
-    },
-    lead: {
-        p1: "0 5 7 8 9",
-        p2: "0 6 * * 9"
-    }
-};
-var plan = {
-    base: "p1 p1 p2 p1",
-    lead: "p1 *"
-};
-function playScore(instrument,pattern){
-    console.log("playing "+pattern+" on "+instrument);
+function example(){
+  var notes = s2notes("0 -- * 3 / 12 12 ");
+  var buffer = notes2buffer(notes)
+  sequencer = {};
+  buffer2Sequencer(sequencer, "bass", buffer);
 }
-
-function playSequence(sequence, score){
-    var cursor = 0;
-    var ended = false;
-    while(!ended){
-        ended=true;
-        for(var instrument in sequence){
-            if (cursor<sequence[instrument].length-1){
-                ended = false;
-            }
-            var patternName = sequence[instrument][cursor % sequence[instrument].length];
-            if (patternName != "*"){
-                console.log("play "+patternName+" from "+instrument);
-                pattern = score[instrument][patternName];
-                console.log("pattern "+pattern);
-                var playThread = function(){
-                    playScore(instrument,pattern);
-                }();
-                //setTimeout(playThread,500);
-            }
-        }
-        cursor ++;
-    }
-}
-var score = makeScore(patterns);
-var sequence = makeSequence(plan);
-playSequence(sequence, score);
