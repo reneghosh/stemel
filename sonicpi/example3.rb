@@ -121,42 +121,47 @@ def randomize_attack(notes, factor)
   buffer = []
   notes.each do |pland|
     new_note = pland.note.clone
-    point = (rand())
-    new_note.attack = point
-    new_note.release = 1- point
+    point = 1+((rand()-0.5)*factor)
+    new_note.attack *= point
+    if new_note.attack > 1
+      new_note.attack = 1
+    end
+    if new_note.attack < 0
+      new_note.attack = 0
+    end
+    new_note.release = 1-new_note.attack
     buffer << Plan.new(new_note, pland.time)
   end
   buffer.sort{|a,b| a.time <=> b.time}
 end
 
 
-player1 = Proc.new do |frequency, duration, amplitude|
+player1 = Proc.new do |frequency, duration, amplitude, attack, release|
     use_synth :fm
-    point = rand()*0.1
-    p = play frequency, attack: duration*point, release: duration*(1-point), amp:amplitude
+    p = play frequency, attack: attack, release: release, amp:amplitude
 end
 
 step=0.25
-notes = make_pattern(" 7 - 7 7 / >> 12 7 5 7 12 7 5 7")
-notes = make_pattern(" 5 - 5 5 / >> 12 7 5 7 12 7 5 7")
-notes = make_pattern("> 0 - 0 0 / > 12 7 5 7 12 7 5 7")
-notes = randomize_time(notes, 0.04)
-notes = randomize_amplitude(notes, 0.9)
-notes = randomize_attack(notes, 0.9)
-puts notes.to_s
+plan = make_pattern(" 7 - 7 7 / >> 12 7 5 7 12 7 5 7")
+plan = make_pattern(" 5 - 5 5 / >> 12 7 5 7 12 7 5 7")
+plan = make_pattern("> 0 - 0 0 / > 12 7 5 7 12 7 5 7")
+plan = randomize_time(plan, 0.04)
+plan = randomize_amplitude(plan, 0.9)
+plan = randomize_attack(plan, 1)
 
 live_loop :loopi do
   with_fx :gverb, mix:0.1 do
     with_fx :ixi_techno do
       prev_time = 0
-      notes.each do |plan|
-        unless (plan.time == 0) || (plan.time-prev_time<0.01)
-          sleep (plan.time - prev_time)*step
+      plan.each do |pland|
+        unless (pland.time == 0) || (pland.time-prev_time<0.01)
+          sleep (pland.time - prev_time)*step
         end
-        if plan.note.frequency > 0
-          player1.call(plan.note.frequency,plan.note.duration*step)
+        if pland.note.frequency > 0
+          player1.call(pland.note.frequency,pland.note.duration*step,
+            pland.note.amplitude,pland.note.attack*step, pland.note.release*step)
         end
-        prev_time = plan.time
+        prev_time = pland.time
       end
       sleep step
     end
