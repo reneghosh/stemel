@@ -1,14 +1,14 @@
-Note = Struct.new :frequency, :duration, :amplitude, :attack, :release do
-  def initialize(*)
-    super
-    self.amplitude ||= 1.0
-    self.attack ||= 0.2
-    self.release ||= 0.8
-  end
-end
-Plan = Struct.new :note, :time do
-  def initialize(*)
-    super
+def complete_notes(notes)
+  notes.each do |note|
+    unless note[:attack]
+      note[:attack]=0.2
+    end
+    unless note[:release]
+      note[:release]=0.8
+    end
+    unless note[:amplitude]
+      note[:amplitude]=1.0
+    end
   end
 end
 
@@ -29,13 +29,13 @@ def make_notes(note_s)
           lookback_counter -=1
         end
         if lookback_counter>=0
-          vals[lookback_counter].duration+=1
+          vals[lookback_counter][:duration]+=1
         end
-        vals << Note.new(-1, 1)
+        vals << {:frequency => -1, :duration=> 1}
       end
     when /^\*+?$/
       note.size().times do
-        vals << Note.new(-1, 1)
+        vals << {:frequency => -1, :duration=> 1}
       end
     when '/'
       vals = []
@@ -52,7 +52,7 @@ def make_notes(note_s)
         oct = 0
       end
     when /^[\d | \.]+?$/
-        vals << Note.new(note.to_f+(oct*12), 1)
+        vals << { :frequency => note.to_f+(oct*12), :duration=> 1}
     when /^a[\d | \.]+?$/
       amplitude = note.slice(1,note.size()-1).to_f
     else
@@ -68,13 +68,17 @@ end
 def flatten(pattern)
   buffer = []
   counter = 0
-  pattern.each do |voices|
-    voices.each do |note|
-      buffer << Plan.new(note, counter)
+  pattern.each do |voice|
+    voice.each do |note|
+      new_note=note.clone()
+      new_note[:time] = counter
+      buffer << new_note
     end
-    counter += 1
+    counter = counter + 1
   end
-  buffer.sort{|a,b| a.time <=> b.time}
+  buffer = buffer.sort{|a,b| a[:time] <=> b[:time]}
+  buffer = complete_notes(buffer)
+  buffer
 end
 
 def make_pattern(score)
@@ -93,75 +97,93 @@ def make_pattern(score)
     pattern << seq_buffer
     counter += 1
   end
-  flatten(pattern)
+  pattern = flatten(pattern)
+  pattern
 end
 
 #randomize the time of a note
 def randomize_time(notes, factor)
   buffer = []
   notes.each do |note|
-    buffer << Plan.new(note.note, note.time+(rand()-0.5)*factor)
+    note[:time]=note[:time]+(rand()-0.5)*factor
+    buffer << note
   end
-  buffer.sort{|a,b| a.time <=> b.time}
+  buffer.sort{|a,b| a[:time] <=> b[:time]}
 end
 
 # randomize amplitudes
 def randomize_amplitude(notes, factor)
   buffer = []
   notes.each do |pland|
-    new_note = pland.note.clone
-    new_note.amplitude = new_note.amplitude+((rand()-0.5)*factor)
-    buffer << Plan.new(new_note, pland.time)
+    new_note = pland.clone()
+    new_note[:amplitude] = new_note[:amplitude]+((rand()-0.5)*factor)
+    buffer << new_note
   end
-  buffer.sort{|a,b| a.time <=> b.time}
+  buffer.sort{|a,b| a[:time] <=> b[:time]}
+end
+
+def multiply_plan(factor, plan)
+  return plan if factor<2
+  max_time = plan.max{ |a,b| a[:time] <=> b[:time] }[:time]
+  buffer = []
+  (factor-1).times do |i|
+    plan.each do |note|
+      new_note = note.clone()
+      new_note[:time] += i*(max_time+1)
+      buffer << new_note
+    end
+  end
+  buffer
 end
 
 # randomize attack-delays
 def randomize_attack(notes, factor)
   buffer = []
-  notes.each do |pland|
-    new_note = pland.note.clone
+  notes.each do |note|
+    new_note = note.clone()
     point = 1+((rand()-0.5)*factor)
-    new_note.attack *= point
-    if new_note.attack > 1
-      new_note.attack = 1
+    new_note[:attack] *= point
+    if new_note[:attack] > 1
+      new_note[:attack] = 1
     end
-    if new_note.attack < 0
-      new_note.attack = 0
+    if new_note[:attack] < 0
+      new_note[:attack] = 0
     end
-    new_note.release = 1-new_note.attack
-    buffer << Plan.new(new_note, pland.time)
+    new_note[:release] = 1-new_note[:attack]
+    buffer << new_note
   end
-  buffer.sort{|a,b| a.time <=> b.time}
+  buffer.sort{|a,b| a[:time] <=> b[:time]}
 end
-
 
 player1 = Proc.new do |frequency, duration, amplitude, attack, release|
-    use_synth :fm
-    p = play frequency, attack: attack, release: release, amp:amplitude
+    use_synth :tb303
+    p = play frequency, attack:attack*0.01, decay:0.1, sustain:duration*0.7, release:duration*0.3, amp:amplitude
 end
 
-step=0.25
-plan = make_pattern(" 7 - 7 7 / >> 12 7 5 7 12 7 5 7")
-plan = make_pattern(" 5 - 5 5 / >> 12 7 5 7 12 7 5 7")
+step=0.18
+# plan = make_pattern(" 7 - 7 7 / >> 12 7 5 7 12 7 5 7")
+# plan = make_pattern(" 5 - 5 5 / >> 12 7 5 7 12 7 5 7")
+plan = make_pattern(">> 0 7 5 8")
 plan = make_pattern("> 0 - 0 0 / > 12 7 5 7 12 7 5 7")
-plan = randomize_time(plan, 0.04)
-plan = randomize_amplitude(plan, 0.9)
-plan = randomize_attack(plan, 1)
-
+# plan = multiply_plan(10, plan)
+# plan = randomize_time(plan, 0.09)
+# plan = randomize_amplitude(plan, 1.7)
+# plan = randomize_attack(plan, 2)
+puts plan
 live_loop :loopi do
-  with_fx :gverb, mix:0.1 do
-    with_fx :ixi_techno do
+  with_fx :lpf, cutoff: 100 do
+    with_fx :reverb, mix:0.3 do
       prev_time = 0
-      plan.each do |pland|
-        unless (pland.time == 0) || (pland.time-prev_time<0.01)
-          sleep (pland.time - prev_time)*step
+      plan.each do |note|
+        puts note
+        unless (note[:time] == 0) || (note[:time]-prev_time<0.01)
+          sleep (note[:time] - prev_time)*step
         end
-        if pland.note.frequency > 0
-          player1.call(pland.note.frequency,pland.note.duration*step,
-            pland.note.amplitude,pland.note.attack*step, pland.note.release*step)
+        if note[:frequency] > 0
+          player1.call(note[:frequency],note[:duration]*step,
+            note[:amplitude],note[:attack]*step, note[:release]*step)
         end
-        prev_time = pland.time
+        prev_time = note[:time]
       end
       sleep step
     end
