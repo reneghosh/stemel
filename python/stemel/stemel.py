@@ -92,7 +92,6 @@ def make_pattern(score, step_size=0.25):
         if lookback_counter>=0:
           vals[lookback_counter]["sustain"]+=step_size
           vals[lookback_counter]["duration"]+=step_size
-          print(vals[lookback_counter]["duration"])
     elif re.search(r'^\*+?$', note):
       # rest
       for i in note:
