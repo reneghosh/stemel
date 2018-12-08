@@ -1,8 +1,8 @@
 from FoxDot import *
 import time
 import sys
-sys.path.append("../python")
-from stemel import *
+sys.path.append("../lib")
+from stemel.stemel import *
 
 """
 Example of using stemel with FoxDot
@@ -24,10 +24,10 @@ def stemel_player(player,pattern,step_size,**args):
   with freqency, duration and sustain parameters,
   relaying any other keyword parameter while doing so.
   """
-  pattern = make_pattern(pattern, step_size)
-  (frequencies,durations, sustains) = replace_rests(*pattern, rest(step_size))
-  print_pattern(*(frequencies,durations, sustains))
-  return player(frequencies, dur=durations, sus=sustains, **args)
+  pattern = Stemel(pattern, step_size)
+  # (frequencies,durations, sustains) = replace_rests(*pattern, rest(step_size))
+  # print_pattern(*(frequencies,durations, sustains))
+  return player(pat.frequencies, dur=pat.durations, sus=pat.sustains, **args)
 
 (frequencies, durations, sustains) = make_pattern("> 0 - 0", 0.5)
 print("pitch=%s" % frequencies)
@@ -42,6 +42,3 @@ b3 >> stemel_player(bass, "> 0 0 0 0 5 5 0 0 7 7 0 0", 2, amp=0.5,lpf=150, pan=[
 # b1 >> pluck(frequencies, dur=durations, sus=sustains, amp=amplitudes, )
 #
 p1 >> stemel_player(ambi, ">> 0 * 0 --- ", 0.25, tremolo=4)
-
-while 1:
-  time.sleep(100)
