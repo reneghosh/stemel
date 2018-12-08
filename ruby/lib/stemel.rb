@@ -11,14 +11,14 @@ def make_notes(pattern_string)
     when /^-+?/
       note.size().times do
         lookback_counter = vals.size()-1
-        while ((lookback_counter > 0) && (vals[lookback_counter].value<0))
+        while ((lookback_counter > 0) && (vals[lookback_counter][:frequency]<0))
           lookback_counter -=1
         end
         if lookback_counter>=0
           vals[lookback_counter][:duration]+=1
           vals[lookback_counter][:sustain]+=1
         end
-        vals << {:frequency => -1, :duration=> 1, :sustain => 1}
+        vals << {:frequency => -1, :duration=> {"rest":1}, :sustain => 1}
       end
     when /^\*+?$/
       # rest
@@ -48,7 +48,7 @@ def make_notes(pattern_string)
   polyvals
 end
 
-def separate(pattern)
+def separate(pattern, step_size)
   durations = []
   sustains = []
   pitches = []
@@ -57,18 +57,24 @@ def separate(pattern)
     sus_buff =[]
     pit_buff =[]
     line.each do |note|
-      dur_buff << note[:duration]
-      sus_buff << note[:sustain]
+      duration = note[:duration]
+      if duration.class == Hash
+        duration[:rest]=step_size
+        dur_buff << duration
+      else
+        dur_buff << duration*step_size
+      end
+      sus_buff << note[:sustain]*step_size
       pit_buff << note[:frequency]
     end
     durations << dur_buff
     sustains << sus_buff
     pitches << pit_buff
   end
-  [pitches, durations, sustains]
+  {:pitches => pitches, :durations => durations, :sustains => sustains}
 end
 
-def make_pattern(score)
+def make_pattern(score, step_size)
   pattern = []
   notes = make_notes(score)
   return if notes.size()==0
@@ -84,9 +90,10 @@ def make_pattern(score)
     pattern << seq_buffer
     counter += 1
   end
-  pattern = separate(pattern)
+  pattern = separate(pattern, step_size)
   pattern
 end
 
-plan = make_pattern("0 - 5 8 / 5 * 5 5")
-puts plan.to_s
+
+pattern = make_pattern("0 --- 5 --- / 7 7 * 7 10 7 * 7", 0.5)
+puts pattern
