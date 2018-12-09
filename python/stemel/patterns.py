@@ -1,5 +1,6 @@
 import re
-from helpers import *
+import sys
+from stemel.foxdot import *
 def make_rest(step_size):
   """
   this method constructs a placeholder for a rest note
@@ -42,8 +43,14 @@ def make_pattern(score, step_size):
   polyvals=[]
   vals = []
   polyvals.append(vals)
-  oct = 0
+  oct = 1
   amplitude = 1.0
+  score = re.sub(r'-', ' - ', score)
+  score = re.sub(r'<', ' < ', score)
+  score = re.sub(r'>', ' > ', score)
+  score = re.sub(r'\*', ' * ', score)
+  score = re.sub(r'/', ' / ', score)
+  score = re.sub(r'\s+', ' ', score)
   for note in re.split(r'\s+', score):
     note = note.strip()
     note = note.lower()
@@ -66,14 +73,10 @@ def make_pattern(score, step_size):
       polyvals.append(vals)
     elif re.search(r'^>+?', note):
       # octave up
-      for i in note:
-        oct +=1
+      oct +=1
     elif re.search(r'^<+?', note):
       # octave down
-      for i in note:
-        oct -=1
-      if oct < 0:
-        oct = 0
+      oct -=1
     elif re.search(r'^[\d | \.]+?$', note):
       # note
       vals.append({'frequency':(float(note)+(oct*12)),'duration':step_size,'sustain':step_size})

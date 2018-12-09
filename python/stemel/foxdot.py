@@ -1,5 +1,5 @@
 from FoxDot import *
-import sys
+import re
 from stemel.patterns import *
 
 def foxdotidy(pattern):
@@ -16,7 +16,7 @@ def foxdotidy(pattern):
     rest_list = []
     counter = 0
     for val in line:
-      if type(val) != type({}):
+      if type(val) != type({}): #found a non-rest
         found = True
         non_rest = val
       else:
@@ -24,7 +24,7 @@ def foxdotidy(pattern):
       counter += 1
     if found is False:
       non_rest = line[0]
-    return (found, val, rest_list)
+    return (found, non_rest, rest_list)
   (pitches, durations, sustains) = pattern.patterns()
   # clean up values that have rests but other notes too
   # replace mixed durations with the first non-rest
@@ -34,9 +34,15 @@ def foxdotidy(pattern):
       (found, val, rest_list) = first_non_rest(durations[counter])
       durations[counter]= val
       if (found):
+        pitches_to_remove = []
+        sustains_to_remove = []
         for index in rest_list:
-          pitches[counter].remove(pitches[counter][index])
-          sustains[counter].remove(sustains[counter][index])
+          pitches_to_remove.append(pitches[counter][index])
+          sustains_to_remove.append(sustains[counter][index])
+        for pitch in pitches_to_remove:
+          pitches[counter].remove(pitch)
+        for sustain in sustains_to_remove:
+          sustains[counter].remove(sustain)
     counter += 1
   # replace lists with tuples
   new_pitches = []
@@ -62,7 +68,6 @@ def foxdotidy(pattern):
     if (type(line)==type((tuple([])))) and (len(line)==1):
       new_sustains[counter]=new_sustains[counter][0]
     counter += 1
-
   return (new_pitches, new_durations, new_sustains)
 
 def stemel_player(player,pattern,step_size,**args):
@@ -71,10 +76,14 @@ def stemel_player(player,pattern,step_size,**args):
   with freqency, duration and sustain parameters,
   relaying any other keyword parameter while doing so.
   """
-  pattern = Stemel(pattern, step_size)
-  # (frequencies,durations, sustains) = replace_rests(*pattern, rest(step_size))
-  # print_pattern(*(frequencies,durations, sustains))
-  return player(pat.frequencies, dur=pat.durations, sus=pat.sustains, **args)
+  (pitches, durations, sustains) = fdpat(pattern, step_size)
+  return player(pitches, dur=durations, sus=sustains, **args)
+
+def stplay(player,pattern,step_size,**args):
+  """
+  alias for stemel_player
+  """
+  return stemel_player(player,pattern,step_size,**args)
 
 def fdpat(pattern, step_size):
   return foxdotidy(Stemel(pattern, step_size))
