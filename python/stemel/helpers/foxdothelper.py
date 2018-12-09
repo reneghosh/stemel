@@ -1,6 +1,5 @@
 from FoxDot import *
 import sys
-sys.path.append("../stemel")
 from stemel.patterns import *
 
 def foxdotidy(pattern):
@@ -78,4 +77,4 @@ def stemel_player(player,pattern,step_size,**args):
   return player(pat.frequencies, dur=pat.durations, sus=pat.sustains, **args)
 
 def fdpat(pattern, step_size):
-  return foxdotidy(Stemel(pattern, step_size).patterns())
+  return foxdotidy(Stemel(pattern, step_size))
