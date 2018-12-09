@@ -1,5 +1,5 @@
 import re
-
+from helpers import *
 def make_rest(step_size):
   """
   this method constructs a placeholder for a rest note
@@ -80,7 +80,10 @@ def make_pattern(score, step_size):
   return separate(polyvals)
 
 class Stemel:
-
+  """
+  This is the class that holds the patterns, parses them into
+  lists of pitch, duration and sustain information.
+  """
   def replace_rests(pitch, duration, sustain, obj):
     new_duration = []
     for step in duration:
@@ -100,12 +103,10 @@ class Stemel:
     return (pitch, new_duration, sustain)
 
 
-  def print(self):
+  def patterns(self):
     return (self.pitches, self.durations, self.sustains)
 
   def __init__(self, pattern, step_size):
     self.pattern = pattern
     self.step_size = step_size
     (self.pitches, self.durations, self.sustains) = make_pattern(pattern,step_size)
-
-pat = Stemel("0 - 0 0 / 5- 7-", 0.25)

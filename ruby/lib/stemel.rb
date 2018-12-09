@@ -15,7 +15,6 @@ def make_notes(pattern_string)
           lookback_counter -=1
         end
         if lookback_counter>=0
-          vals[lookback_counter][:duration]+=1
           vals[lookback_counter][:sustain]+=1
         end
         vals << {:frequency => -1, :duration=> {"rest":1}, :sustain => 1}
@@ -95,5 +94,5 @@ def make_pattern(score, step_size)
 end
 
 
-pattern = make_pattern("0 --- 5 --- / 7 7 * 7 10 7 * 7", 0.5)
+pattern = make_pattern("0 - 0", 0.5)
 puts pattern

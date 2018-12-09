@@ -10,7 +10,7 @@ with_fx :lpf, mix: 0.7, cutoff: 70 do
     end
 
     live_loop :loop2 do
-      use_synth :fm
+      use_synth :hoover
       sp(pattern2, 0.6)
     end
   end

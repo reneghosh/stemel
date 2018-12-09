@@ -1,5 +1,6 @@
 # play a pattern in sonic pi
-def sp(pattern)
+def sp(pattern, amplitude)
+  counter1 = 0
   pattern[:pitches].each do |notes|
     counter2 = 0
     duration = 0
@@ -8,7 +9,7 @@ def sp(pattern)
       if dur.class==Hash
         duration = dur[:rest]
       else
-        play note, release:pattern[:sustains][counter1][counter2], amp:2+(rand())
+        play note, release:pattern[:sustains][counter1][counter2], amp:amplitude
         duration = dur
       end
       puts duration
