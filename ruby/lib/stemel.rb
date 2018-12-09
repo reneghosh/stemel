@@ -2,8 +2,14 @@ def make_notes(pattern_string)
   polyvals=[]
   vals = []
   polyvals << vals
-  oct = 3
+  oct = 0
   amplitude = 1.0
+  pattern_string = pattern_string.gsub(/>/,' > ')
+    .gsub(/</,' < ')
+    .gsub(/-/,' - ')
+    .gsub(/\*/,' * ')
+    .gsub(/\//,' / ')
+    .gsub(/\s+/, ' ')
   pattern_string.split(" ").each do |note|
     note.strip!
     note.downcase!
@@ -93,6 +99,15 @@ def make_pattern(score, step_size)
   pattern
 end
 
+class Stemel
+  def initialize(pattern, step_size)
+    @pattern_string = pattern
+    @pattern = make_pattern(pattern, step_size)
+  end
+  def pattern()
+    @pattern
+  end
+end
 
-pattern = make_pattern("0 - 0", 0.5)
+pattern = make_pattern(">0-0", 0.5)
 puts pattern
