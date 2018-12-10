@@ -29,6 +29,12 @@ The gist of it is this:
 previously entered note b one step
 - a '/' character is to start a new voice (track).
 - rests are represented by a '*' character.
+- a '>' character sends the base range up an octave (all sucessive notes 
+will be higher pitched by one octave)
+- a '<' characters sends the base range down one octave
+- Any character can be repeated any number of times ('>>' to go 
+up two octaves, '<<' to go down two octaves, '**' for two rests, 
+'---' to carry the preceding note to spawn four sequence steps)
 
 ## Roadmap
 
