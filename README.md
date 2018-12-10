@@ -1,4 +1,4 @@
-# stemeL
+# stemel
 
 _polyphonic score player for FoxDot and Sonic Pi_
 
@@ -13,6 +13,18 @@ step sequencers and
 
 ## stemel in a nutshell
 
+Stemel represents notes in the form a step
+sequencer does.
+
+Let's start with an example. This is a 
+two-voice socre, with one voice inputting midi
+note 0 twice, once with a two-step duration and 
+once with a one-step duration. The other voice
+is inputting midi note 7, then resting for 
+two steps.
+
+Here's what it looks like:
+  
 ```
 0 - 0 / 7 * * 
 ```
@@ -24,17 +36,16 @@ step sequencers that supports polyphony.
 
 The gist of it is this:
 
-- write a series of notes as midi numbers
-- a '-' character extends the length of the 
-previously entered note b one step
-- a '/' character is to start a new voice (track).
-- rests are represented by a '*' character.
-- a '>' character sends the base range up an octave (all sucessive notes 
-will be higher pitched by one octave)
-- a '<' characters sends the base range down one octave
-- Any character can be repeated any number of times ('>>' to go 
-up two octaves, '<<' to go down two octaves, '**' for two rests, 
-'---' to carry the preceding note to spawn four sequence steps)
+| `(number)` | add note of midi pitch (number) |
+| `-` | carry previous note's duration one step |
+| `*` | rest for a step |
+| `>` | shift next notes up an octave |
+| `<` | shift next notes down an octave |
+| `/` | start a new voice |
+
+- whitespace is optional, except after a note
+pitch (you have to be able to separate numbers)
+- any operator can be repeated multiple times 
 
 ## Roadmap
 
