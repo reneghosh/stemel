@@ -36,6 +36,7 @@ step sequencers that supports polyphony.
 
 The gist of it is this:
 
+| operator | description |
 | ----| ----|
 | `(number)` | add note of midi pitch (number) |
 | `-` | carry previous note's duration one step |
