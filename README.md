@@ -2,7 +2,7 @@
 
 _polyphonic score player for FoxDot and Sonic Pi_
 
-**NOTE**: SteMeL is very much a work in progress 
+**NOTE**: stemel is very much a work in progress 
 at the moment as the syntax and scope are changing.
 I'm not yet sure what form it will take when I 
 release it.
@@ -19,7 +19,7 @@ step sequencers and
 
 ## User Guide
 
-SteMel is a musical notation format inspired by 
+Stemel is a musical notation format inspired by 
 step sequencers that supports polyphony.
 
 The gist of it is this:
