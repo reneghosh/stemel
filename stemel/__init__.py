@@ -1,3 +1,3 @@
-name = "stemel"
-from stemel.foxdot import *
-from stemel.patterns import *
+from stemel.stemel import *
+from stemel.stemel_parser import *
+from stemel.stemel_foxdot import *

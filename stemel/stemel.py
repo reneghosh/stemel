@@ -1,6 +1,5 @@
-import re
-import sys
-from stemel.foxdot import *
+from stemel.stemel_parser import *
+
 def make_rest(step_size):
   """
   this method constructs a placeholder for a rest note
@@ -40,46 +39,46 @@ def make_pattern(score, step_size):
   Take a score inputted as a line of text and a step size (0.25 default)
   and return a tuple of frequencies, sustains and durations
   """
+  def is_number(note):
+    try:
+      float(note)
+      return True
+    except ValueError:
+      return False
   polyvals=[]
   vals = []
   polyvals.append(vals)
   oct = 1
   amplitude = 1.0
-  score = re.sub(r'-', ' - ', score)
-  score = re.sub(r'<', ' < ', score)
-  score = re.sub(r'>', ' > ', score)
-  score = re.sub(r'\*', ' * ', score)
-  score = re.sub(r'/', ' / ', score)
-  score = re.sub(r'\s+', ' ', score)
-  for note in re.split(r'\s+', score):
+  buffer = parse_line(score)
+  for note in buffer:
     note = note.strip()
     note = note.lower()
-    if re.search(r'^-+?', note):
+    if note=='-':
       # carry previous note one more step
-      for i in note:
-        lookback_counter = len(vals)-1
-        while (lookback_counter > 0) and (vals[lookback_counter]['frequency']<0):
-          lookback_counter -=1
-        if lookback_counter>=0:
-          vals[lookback_counter]["sustain"]+=step_size
-          vals.append({'frequency':-1,'duration':make_rest(step_size),'sustain':step_size})
-    elif re.search(r'^\*+?$', note):
+      lookback_counter = len(vals)-1
+      while (lookback_counter > 0) and (vals[lookback_counter]['frequency']<0):
+        lookback_counter -=1
+      if lookback_counter>=0:
+        vals[lookback_counter]["sustain"]+=step_size
+        vals.append({'frequency':-1,'duration':make_rest(step_size),'sustain':step_size})
+    elif note == "*":
       # add a rest
-      for i in note:
-         vals.append({'frequency':-1,'duration':make_rest(step_size),'sustain':step_size})
-    elif re.search(r'/',note):
+       vals.append({'frequency':-1,'duration':make_rest(step_size),'sustain':step_size})
+    elif note == "/":
       # new track
       vals = []
       polyvals.append(vals)
-    elif re.search(r'^>+?', note):
+    elif note == '>':
       # octave up
       oct +=1
-    elif re.search(r'^<+?', note):
+    elif note == '<':
       # octave down
       oct -=1
-    elif re.search(r'^[\d | \.]+?$', note):
+    elif is_number(note):
       # note
-      vals.append({'frequency':(float(note)+(oct*12)),'duration':step_size,'sustain':step_size})
+      frequency = float(note)+(oct*12)
+      vals.append({'frequency':frequency,'duration':step_size,'sustain':step_size})
   return separate(polyvals)
 
 class Stemel:
@@ -113,3 +112,7 @@ class Stemel:
     self.pattern = pattern
     self.step_size = step_size
     (self.pitches, self.durations, self.sustains) = make_pattern(pattern,step_size)
+
+if __name__ == '__main__':
+  print("tests")
+  print(Stemel("0-*/7 7-", 0.5).patterns())
