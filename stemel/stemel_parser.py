@@ -69,12 +69,29 @@ def ungroup(str):
           replacement_buffer.append(''.join(buff))
   return replace_groupings(new_str, replacement_buffer)
 
+def separate_commands(buffer):
+  """
+  separate into an array of buffers
+  acording to the | pipe character"
+  """
+  buffers = []
+  current_buffer = []
+  buffers.append(current_buffer)
+  for word in buffer:
+    if word == '|':
+      new_buffer = []
+      current_buffer = new_buffer
+      buffers.append(current_buffer)
+    else:
+      current_buffer.append(word)
+  return buffers
+
 
 def parse_line(str):
   """
   Parse a stemel score and generate words
   """
-  symbols = ['<', '>', '|', '*', '-']
+  symbols = ['<', '>', '|', '*', '-', '/']
   str = ungroup(str + " ")
   buffer=[]
   word_buffer = []
@@ -106,11 +123,11 @@ def parse_line(str):
               buffer.append(''.join(word_buffer))
               wording = False
             word_buffer=[]
-  return buffer
+  return separate_commands(buffer)
 
 if __name__ == '__main__':
   """
   testing method
   """
-  buffer = parse_line("(0.1(10))*4:1:2 test4 ing5")
+  buffer = parse_line("0-*/7 7- | amp 0.5 0.6")
   print(buffer)

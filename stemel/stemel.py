@@ -1,6 +1,19 @@
-from stemel.stemel_parser import *
+from stemel_parser import *
+
+class Command:
+  """
+  Class to hold commands.
+  The basic command is a score of notes,
+  but others can include amplitude commands,
+  filters, etc.
+  """
+  def __init__(self, type_name, buffers):
+    self.type_name = type_name
+    self.buffers = buffers
 
 def make_rest(step_size):
+
+
   """
   this method constructs a placeholder for a rest note
   """
@@ -34,6 +47,22 @@ def separate(notes):
     counter += 1
   return (frequencies, durations, sustains)
 
+def process(commands):
+  """
+  process a list of commands,
+  concatenating all buffers that
+  aren't functions into the main pitch-duration-sustain buffer
+  """
+  main_buffer = []
+  other_buffers = []
+  cursor = 0
+  for command in commands:
+    if command.type_name == "score":
+      main_buffer += command.buffers
+    else:
+      other_buffers.append(command)
+    return (main_buffer[0], main_buffer[1], main_buffer[2], other_buffers)
+
 def make_pattern(score, step_size):
   """
   Take a score inputted as a line of text and a step size (0.25 default)
@@ -50,36 +79,47 @@ def make_pattern(score, step_size):
   polyvals.append(vals)
   oct = 1
   amplitude = 1.0
-  buffer = parse_line(score)
-  for note in buffer:
-    note = note.strip()
-    note = note.lower()
-    if note=='-':
-      # carry previous note one more step
-      lookback_counter = len(vals)-1
-      while (lookback_counter > 0) and (vals[lookback_counter]['frequency']<0):
-        lookback_counter -=1
-      if lookback_counter>=0:
-        vals[lookback_counter]["sustain"]+=step_size
-        vals.append({'frequency':-1,'duration':make_rest(step_size),'sustain':step_size})
-    elif note == "*":
-      # add a rest
-       vals.append({'frequency':-1,'duration':make_rest(step_size),'sustain':step_size})
-    elif note == "/":
-      # new track
-      vals = []
-      polyvals.append(vals)
-    elif note == '>':
-      # octave up
-      oct +=1
-    elif note == '<':
-      # octave down
-      oct -=1
-    elif is_number(note):
-      # note
-      frequency = float(note)+(oct*12)
-      vals.append({'frequency':frequency,'duration':step_size,'sustain':step_size})
-  return separate(polyvals)
+  commands = []
+  buffers = parse_line(score)
+  for buffer in buffers:
+    counter = 0
+    type_name = "score"
+    for note in buffer:
+      note = note.strip()
+      note = note.lower()
+      if note=='-':
+        # carry previous note one more step
+        lookback_counter = len(vals)-1
+        while (lookback_counter > 0) and (vals[lookback_counter]['frequency']<0):
+          lookback_counter -=1
+        if lookback_counter>=0:
+          vals[lookback_counter]["sustain"]+=step_size
+          vals.append({'frequency':-1,'duration':make_rest(step_size),'sustain':step_size})
+      elif note == "*":
+        # add a rest
+         vals.append({'frequency':-1,'duration':make_rest(step_size),'sustain':step_size})
+      elif note == "/":
+        # new track
+        vals = []
+        polyvals.append(vals)
+      elif note == '>':
+        # octave up
+        oct +=1
+      elif note == '<':
+        # octave down
+        oct -=1
+      elif is_number(note):
+        # note
+        frequency = float(note)+(oct*12)
+        vals.append({'frequency':frequency,'duration':step_size,'sustain':step_size})
+      else:
+        if counter == 0:
+          type_name = note
+        else:
+          vals.append(note)
+      counter += 1
+    commands.append(Command(type_name,separate(polyvals)))
+  return process(commands)
 
 class Stemel:
   """
@@ -106,13 +146,13 @@ class Stemel:
 
 
   def patterns(self):
-    return (self.pitches, self.durations, self.sustains)
+    return (self.pitches, self.durations, self.sustains, self.opts)
 
   def __init__(self, pattern, step_size):
     self.pattern = pattern
     self.step_size = step_size
-    (self.pitches, self.durations, self.sustains) = make_pattern(pattern,step_size)
+    (self.pitches, self.durations, self.sustains, self.opts) = make_pattern(pattern,step_size)
 
 if __name__ == '__main__':
   print("tests")
-  print(Stemel("0-*/7 7-", 0.5).patterns())
+  print(Stemel("0-*/7 7- | amp 0.5 0.6", 0.5).patterns())

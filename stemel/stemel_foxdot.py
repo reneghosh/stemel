@@ -27,7 +27,7 @@ def foxdotidy(pattern):
     if found is False:
       non_rest = line[0]
     return (found, non_rest, rest_list)
-  (pitches, durations, sustains) = pattern.patterns()
+  (pitches, durations, sustains, optionals) = pattern.patterns()
   # clean up values that have rests but other notes too
   # replace mixed durations with the first non-rest
   counter = 0
@@ -92,8 +92,8 @@ def fdpat(pattern, step_size):
 
 if __name__ == '__main__':
   Scale.default = "chromatic"
-  bass_pattern = "0-0-0-0-0-<5 5 7 10-0 /> * 12 * 12 * 12 * 12 * 12 10 22 22 22 22 24"
-  lead_pattern = ">>7 7 7 7 7 7 7 7 10 10 7 0 7 2 0 7 0 12"
+  bass_pattern = "0-0-0-0-0-<5 5 7 10-0 /> * 12 * 12 * 12 * 12 * 12 10 22 22 22 22 24 | amp 0.4 0.6 0.7"
+  lead_pattern = ">>7 7 7 7 7 7 7 7 10 10 7 0 7 2 0 7 0 12 | amp 0.4 0.6 0.7"
   b1 >> stplay(jbass, bass_pattern, 0.5, oct=4, lpf=240, room=0.7, mix=0.3, shape=0.1, amp=1.5)
   p1 >> stplay(sitar, lead_pattern, 0.25, oct=5, hpf=320, room=0.7, mix=0.3, amp=0.7)
   d1 >> play("x-t-")
