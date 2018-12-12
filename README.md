@@ -61,11 +61,8 @@ Stemel has two implementations in python in ruby.
 It has helpers to use it on FoxDot (python version)
 and Sonic Pi (ruby version).
 
-## Stemel in Python
+## Stemel in Python code
 
-TO DO
-
-## Stemel in Ruby
 
 TO DO
 .
