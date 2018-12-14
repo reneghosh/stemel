@@ -1,33 +1,11 @@
 from FoxDot import *
-from stemel import *
+from stemel.stemel import *
 
-def foxdotidy(pattern):
+def foxdotidy(pitches, durations, sustains):
   """
   transform a stemel note matrix
   into a foxdot-compatible one.
   """
-  def first_non_rest(line):
-    """
-    transform a pattern into a FoxDot pattern.
-    This involves replacing tuples with single values
-    when a tuple contains only one element, and replacing
-    hash rests with foxdot rests
-    """
-    found = False
-    non_rest = None
-    rest_list = []
-    counter = 0
-    for val in line:
-      if type(val) != type({}): #found a non-rest
-        found = True
-        non_rest = val
-      else:
-        rest_list.append(counter)
-      counter += 1
-    if found is False:
-      non_rest = line[0]
-    return (found, non_rest, rest_list)
-  (pitches, durations, sustains, optionals) = pattern.patterns()
   # clean up values that have rests but other notes too
   # replace mixed durations with the first non-rest
   counter = 0
@@ -72,13 +50,48 @@ def foxdotidy(pattern):
     counter += 1
   return (new_pitches, new_durations, new_sustains)
 
+def first_non_rest(line):
+  """
+  find the first non-rest in an array of durations.
+  """
+  found = False
+  non_rest = None
+  rest_list = []
+  counter = 0
+  for val in line:
+    if type(val) != type({}): #found a non-rest
+      found = True
+      non_rest = val
+    else:
+      rest_list.append(counter)
+    counter += 1
+  if found is False:
+    non_rest = line[0]
+  return (found, non_rest, rest_list)
+
+def foxdotidy_pattern(pattern):
+  """
+  transform a pattern into a FoxDot pattern.
+  This involves replacing tuples with single values
+  when a tuple contains only one element, and replacing
+  hash rests with foxdot rests
+  """
+  (pitches, durations, sustains, optionals) = pattern.patterns()
+  (pitches, durations, sustains) = foxdotidy(pitches, durations, sustains)
+  for optional in optionals:
+    pattern = optional.pattern
+    (values, durations, sustains) = foxdotidy(pattern[0],pattern[1],pattern[2])
+    optional.pattern = values
+  return(pitches, durations, sustains, optionals)
+
+
 def stemel_player(player,pattern,step_size,**args):
   """
   player that wraps foxdot synthdefs and calls them
   with freqency, duration and sustain parameters,
   relaying any other keyword parameter while doing so.
   """
-  (pitches, durations, sustains) = fdpat(pattern, step_size)
+  (pitches, durations, sustains, optionals) = fdpat(pattern, step_size)
   return player(pitches, dur=durations, sus=sustains, **args)
 
 def stplay(player,pattern,step_size,**args):
@@ -88,7 +101,7 @@ def stplay(player,pattern,step_size,**args):
   return stemel_player(player,pattern,step_size,**args)
 
 def fdpat(pattern, step_size):
-  return foxdotidy(Stemel(pattern, step_size))
+  return foxdotidy_pattern(Stemel(pattern, step_size))
 
 if __name__ == '__main__':
   Scale.default = "chromatic"
@@ -97,5 +110,6 @@ if __name__ == '__main__':
   b1 >> stplay(jbass, bass_pattern, 0.5, oct=4, lpf=240, room=0.7, mix=0.3, shape=0.1, amp=1.5)
   p1 >> stplay(sitar, lead_pattern, 0.25, oct=5, hpf=320, room=0.7, mix=0.3, amp=0.7)
   d1 >> play("x-t-")
+
   while 1:
     sleep(100)

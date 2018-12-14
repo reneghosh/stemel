@@ -1,15 +1,15 @@
-from stemel_parser import *
+from stemel.stemel_parser import *
 
-class Command:
+class Filter:
   """
-  Class to hold commands.
-  The basic command is a score of notes,
-  but others can include amplitude commands,
-  filters, etc.
+  Class to hold filters.
+  The filter is a name and a pattern.
   """
-  def __init__(self, type_name, buffers):
-    self.type_name = type_name
-    self.buffers = buffers
+  def __init__(self, name, pattern):
+    self.name = name
+    self.pattern = pattern
+  def __repr__(self):
+    return "[Filter %s, pattern=%s]" % (self.name, self.pattern)
 
 def make_rest(step_size):
 
@@ -57,11 +57,11 @@ def process(commands):
   other_buffers = []
   cursor = 0
   for command in commands:
-    if command.type_name == "score":
-      main_buffer += command.buffers
+    if command.name == "score":
+      main_buffer += command.pattern
     else:
       other_buffers.append(command)
-    return (main_buffer[0], main_buffer[1], main_buffer[2], other_buffers)
+  return (main_buffer[0], main_buffer[1], main_buffer[2], other_buffers)
 
 def make_pattern(score, step_size):
   """
@@ -69,19 +69,22 @@ def make_pattern(score, step_size):
   and return a tuple of frequencies, sustains and durations
   """
   def is_number(note):
+    """
+    test is note is a number
+    """
     try:
       float(note)
       return True
     except ValueError:
       return False
-  polyvals=[]
-  vals = []
-  polyvals.append(vals)
-  oct = 1
-  amplitude = 1.0
   commands = []
   buffers = parse_line(score)
   for buffer in buffers:
+    polyvals=[]
+    vals = []
+    polyvals.append(vals)
+    oct = 0
+    amplitude = 1.0
     counter = 0
     type_name = "score"
     for note in buffer:
@@ -118,7 +121,7 @@ def make_pattern(score, step_size):
         else:
           vals.append(note)
       counter += 1
-    commands.append(Command(type_name,separate(polyvals)))
+    commands.append(Filter(type_name,separate(polyvals)))
   return process(commands)
 
 class Stemel:
@@ -126,24 +129,6 @@ class Stemel:
   This is the class that holds the patterns, parses them into
   lists of pitch, duration and sustain information.
   """
-  def replace_rests(pitch, duration, sustain, obj):
-    new_duration = []
-    for step in duration:
-      if type(step)==type((1,)):
-        new_dur = ()
-        for dur in step:
-          if type(dur) == type({}):
-            new_dur = (*new_dur, obj)
-          else:
-            new_dur = (*new_dur, dur)
-        new_duration.append(new_dur)
-      else:
-        if type(step) == type({}):
-          new_duration.append(obj)
-        else:
-          new_duration.append(step)
-    return (pitch, new_duration, sustain)
-
 
   def patterns(self):
     return (self.pitches, self.durations, self.sustains, self.opts)
@@ -154,5 +139,4 @@ class Stemel:
     (self.pitches, self.durations, self.sustains, self.opts) = make_pattern(pattern,step_size)
 
 if __name__ == '__main__':
-  print("tests")
-  print(Stemel("0-*/7 7- | amp 0.5 0.6", 0.5).patterns())
+  Stemel("0-0/7 | amp 0.8", 0.5)
