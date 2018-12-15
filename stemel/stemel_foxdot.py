@@ -84,14 +84,13 @@ def foxdotidy_pattern(pattern):
     optional.pattern = op_values
   return(pitches, durations, sustains, optionals)
 
-
-def stemel_player(player,pattern,step_size,**args):
+def stemel_player(player,pattern,**args):
   """
   player that wraps foxdot synthdefs and calls them
   with frequency, duration and sustain parameters,
   relaying any other keyword parameter while doing so.
   """
-  (pitches, durations, sustains, optionals) = fdpat(pattern, step_size)
+  (pitches, durations, sustains, optionals) = foxdotidy_pattern(pattern)
   opts = {}
   for optional in optionals:
     opts[optional.name]=optional.pattern
@@ -106,14 +105,21 @@ def stemel_player(player,pattern,step_size,**args):
   else:
     opts['sus']=sustains
   return player(pitches, **opts)
-def stplay(player,pattern,step_size,**args):
-  """
-  alias for stemel_player
-  """
-  return stemel_player(player,pattern,step_size,**args)
 
-def fdpat(pattern, step_size):
-  return foxdotidy_pattern(Stemel(pattern, step_size))
+def splay(player,pattern,step_size, **args):
+  """
+  alias for stemel_player for patterns as strings, thus
+  needing a step size for time allotment
+  """
+  return stemel_player(player, Stemel(pattern, step_size),**args)
+
+def slay(player,pattern,**args):
+  """
+  alias for stemel_player for patterns as Stemel objects, thus
+  needing no step size for time allotment
+  """
+  return stemel_player(player,pattern,**args)
+
 
 if __name__ == '__main__':
   Scale.default = "chromatic"

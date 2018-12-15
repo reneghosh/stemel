@@ -1,4 +1,5 @@
 from stemel.stemel_parser import *
+from copy import deepcopy
 
 class Filter:
   """
@@ -139,5 +140,65 @@ class Stemel:
     self.step_size = step_size
     (self.pitches, self.durations, self.sustains, self.opts) = make_pattern(pattern,step_size)
 
+  def shift(self, num):
+    """
+    shift up in frequency
+    """
+    new_pattern = deepcopy(self)
+    pitches = new_pattern.pitches
+    for i in range(0,len(pitches)):
+      for j in range(0, len(pitches[i])):
+        pitches[i][j] += num
+    return new_pattern
+
+  def __rshift__(self, num):
+    return self.shift(num)
+
+  def __lshift__(self, num):
+    return self.shift(-1*num)
+
+  def reverse(self):
+    new_pattern = deepcopy(self)
+    new_pattern.pitches = new_pattern.pitches.reverse()
+    return new_pattern
+
+  def stretch(self, factor):
+    new_pattern = deepcopy(self)
+    durations = new_pattern.durations
+    for i in range(0,len(durations)):
+      for j in range(0, len(durations[i])):
+        if type(durations[i][j]) == type({}):
+          durations[i][j]['rest'] *= factor
+        else:
+          durations[i][j] *= factor
+    return new_pattern
+
+  def mult(self, times):
+    new_pattern = deepcopy(self)
+    for i in range(0, times):
+      new_pattern.pitches += self.pitches
+      new_pattern.durations += self.durations
+      new_pattern.sustains += self.sustains
+    return new_pattern
+
+  def __mul__(self, times):
+    return self.mult(times)
+
+  def add(self, pattern):
+    new_pattern = deepcopy(self)
+    new_pattern.pitches = self.pitches + pattern.pitches
+    new_pattern.durations = self.durations + pattern.durations
+    new_pattern.sustains = self.sustains + pattern.sustains
+    return new_pattern
+  def __add__(self, other):
+    return self.add(other)
+
+  def __repr__(self):
+    return "{Stemel \n\tpitches %s, \n\tdurations %s, \n\tsustains %s\n}" % (self.pitches, self.durations, self.sustains)
+
+
 if __name__ == '__main__':
-  Stemel("0-0/7 | amp 0.8", 0.5)
+  s = Stemel("0-0/7 | amp 0.8", 0.5)
+  s2 = s.shift(2)
+  print(s)
+  print(s2)
