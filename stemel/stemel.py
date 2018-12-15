@@ -63,20 +63,21 @@ def process(commands):
       other_buffers.append(command)
   return (main_buffer[0], main_buffer[1], main_buffer[2], other_buffers)
 
+def is_number(note):
+  """
+  test is note is a number
+  """
+  try:
+    float(note)
+    return True
+  except ValueError:
+    return False
+
 def make_pattern(score, step_size):
   """
   Take a score inputted as a line of text and a step size (0.25 default)
   and return a tuple of frequencies, sustains and durations
   """
-  def is_number(note):
-    """
-    test is note is a number
-    """
-    try:
-      float(note)
-      return True
-    except ValueError:
-      return False
   commands = []
   buffers = parse_line(score)
   for buffer in buffers:

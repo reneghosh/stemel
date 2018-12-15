@@ -80,20 +80,21 @@ def foxdotidy_pattern(pattern):
   (pitches, durations, sustains) = foxdotidy(pitches, durations, sustains)
   for optional in optionals:
     pattern = optional.pattern
-    (values, durations, sustains) = foxdotidy(pattern[0],pattern[1],pattern[2])
-    optional.pattern = values
+    (op_values, op_durations, op_sustains) = foxdotidy(pattern[0],pattern[1],pattern[2])
+    optional.pattern = op_values
   return(pitches, durations, sustains, optionals)
 
 
 def stemel_player(player,pattern,step_size,**args):
   """
   player that wraps foxdot synthdefs and calls them
-  with freqency, duration and sustain parameters,
+  with frequency, duration and sustain parameters,
   relaying any other keyword parameter while doing so.
   """
   (pitches, durations, sustains, optionals) = fdpat(pattern, step_size)
+  for optional in optionals:
+    args[optional.name]=optional.pattern
   return player(pitches, dur=durations, sus=sustains, **args)
-
 def stplay(player,pattern,step_size,**args):
   """
   alias for stemel_player
