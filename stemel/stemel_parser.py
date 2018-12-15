@@ -27,7 +27,7 @@ def replace_groupings(str, groups):
     else:
       if referencing:
         referencing = False
-        new_str += dereference(reference_buffer, groups)
+        new_str += dereference(reference_buffer, groups)+c
         reference_buffer = []
       else:
         new_str += c
@@ -129,5 +129,5 @@ if __name__ == '__main__':
   """
   testing method
   """
-  buffer = parse_line("0-*/7 7- | amp 0.5 0.6")
+  buffer = parse_line("(0):1:1/:1/:1")
   print(buffer)
