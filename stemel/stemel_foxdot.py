@@ -92,9 +92,20 @@ def stemel_player(player,pattern,step_size,**args):
   relaying any other keyword parameter while doing so.
   """
   (pitches, durations, sustains, optionals) = fdpat(pattern, step_size)
+  opts = {}
   for optional in optionals:
-    args[optional.name]=optional.pattern
-  return player(pitches, dur=durations, sus=sustains, **args)
+    opts[optional.name]=optional.pattern
+  for arg in args:
+    opts[arg]=args[arg]
+  if 'dur' in args.keys():
+    opts['dur']=args['dur']
+  else:
+    opts['dur']=durations
+  if 'sus' in args.keys():
+    opts['sus']=args['sus']
+  else:
+    opts['sus']=sustains
+  return player(pitches, **opts)
 def stplay(player,pattern,step_size,**args):
   """
   alias for stemel_player
