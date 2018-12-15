@@ -1,24 +1,27 @@
+def dereference(reference_buffer, groups):
+  """
+  find a reference within a group
+  """
+  if len(reference_buffer)>0:
+    ref_number = int(''.join(reference_buffer))-1
+    return groups[ref_number % len(groups)] +' '
+    return ''
+
 def replace_groupings(str, groups):
   """
   replace variable references with
-  the group if references
+  the group they reference from
   """
-  def dereference(reference_buffer, groups):
-    if len(reference_buffer)>0:
-      ref_number = int(''.join(reference_buffer))-1
-      return groups[ref_number % len(groups)] +' '
-    return ''
   reference_buffer = []
   referencing = False
   new_str = ''
-  for c in str:
+  for c in (str+" "):
     if c == ':':
       if not referencing:
         referencing = True
       else:
         new_str += dereference(reference_buffer, groups)
         reference_buffer = []
-      new_str += ' '
     elif c.isdigit():
       if referencing:
         reference_buffer.append(c)
@@ -50,23 +53,25 @@ def ungroup(str):
       if c == '(':
            cursor += 1
            buffer.append([])
-           new_str += ' '
       elif c == ')':
           if cursor >= 0:
               groups.append(buffer[cursor])
-              buffer.remove(buffer[cursor])
+              buffer[cursor]=[]
               cursor -= 1
               if cursor <-1:
                   cursor = -1
               new_str += ' '
       else:
         new_str += c
+        # add c to all open buffers
         if cursor >= 0:
           for i in range(0,cursor+1):
               buffer[i].append(c)
   replacement_buffer = []
+  counter = 0
   for buff in groups:
-          replacement_buffer.append(''.join(buff))
+    counter += 1
+    replacement_buffer.append(replace_groupings(''.join(buff), replacement_buffer))
   return replace_groupings(new_str, replacement_buffer)
 
 def separate_commands(buffer):
@@ -129,5 +134,5 @@ if __name__ == '__main__':
   """
   testing method
   """
-  buffer = parse_line("(0):1:1/:1/:1")
+  buffer = parse_line("((0) :1 5) :2")
   print(buffer)
