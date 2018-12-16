@@ -135,10 +135,10 @@ class Stemel:
   def patterns(self):
     return (self.pitches, self.durations, self.sustains, self.opts)
 
-  def __init__(self, pattern, step_size):
+  def __init__(self, pattern):
     self.pattern = pattern
-    self.step_size = step_size
-    (self.pitches, self.durations, self.sustains, self.opts) = make_pattern(pattern,step_size)
+    self.step_size = 1
+    (self.pitches, self.durations, self.sustains, self.opts) = make_pattern(pattern, self.step_size)
 
   def shift(self, num):
     """
@@ -195,6 +195,15 @@ class Stemel:
 
   def __repr__(self):
     return "{Stemel \n\tpitches %s, \n\tdurations %s, \n\tsustains %s\n}" % (self.pitches, self.durations, self.sustains)
+
+class Stemelcreator:
+  """
+  Stemel utility allowing for easy pattern creation, as aliased through "S".
+  """
+  def __or__(self, pattern):
+    return Stemel(pattern)
+
+S = Stemelcreator()
 
 
 if __name__ == '__main__':

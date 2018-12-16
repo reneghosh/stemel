@@ -111,15 +111,15 @@ def splay(player,pattern,step_size, **args):
   alias for stemel_player for patterns as strings, thus
   needing a step size for time allotment
   """
-  return stemel_player(player, Stemel(pattern, step_size),**args)
+  return stemel_player(player, Stemel(pattern).stretch(step_size),**args)
 
-def slay(player,pattern,**args):
+def slay(player, pattern, step_size, **args):
   """
   alias for stemel_player for patterns as Stemel objects, thus
   needing no step size for time allotment
   """
+  pattern = pattern.stretch(step_size)
   return stemel_player(player,pattern,**args)
-
 
 if __name__ == '__main__':
   Scale.default = "chromatic"
