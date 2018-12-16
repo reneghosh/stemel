@@ -100,17 +100,17 @@ Patterns can be modified by the `Stemel` class methods. Any modification to a st
 pattern gives rise to a new pattern. Certain methods have operator shorthand versions.
 
 
-| method | description | example (with pattern = S\|"0-0/7")|
+| method | description | example (with `pattern = S\|"0-0/7"`)|
 |--------|-------------|--------------------|
 | shift  | shift pattern pitch | `pattern.shift(2)`|
 | >>     | shift pattern pitch | `pattern >> 2`|
 | <<     | negative shift pattern pitch | `pattern << 2` |
-| reverse|reverse a pattern | pattern.reverse() |
-| stretch| fit step size to fit a step time signature | pattern.stretch(0.5) |
-| mult n | repeat the pattern n times | pattern.mult(4) |
-| *      | repeat the pattern n times | pattern * 4 |
-| add    | concatenate two patterns together | pattern.add(other_pattern) |
-| +      | concatenate two patterns together | pattern + other_pattern |
+| reverse|reverse a pattern | `pattern.reverse()` |
+| stretch| fit step size to fit a step time signature | `pattern.stretch(0.5)` |
+| mult n | repeat the pattern n times | `pattern.mult(4)` |
+| *      | repeat the pattern n times | `pattern * 4` |
+| add    | concatenate two patterns together | `pattern.add(other_pattern)` |
+| +      | concatenate two patterns together | `pattern + other_pattern` |
 
 
 
