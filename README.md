@@ -100,7 +100,7 @@ Patterns can be modified by the `Stemel` class methods. Any modification to a st
 pattern gives rise to a new pattern. Certain methods have operator shorthand versions.
 
 | method | description | example |
-|--------|-------------|--------------------|---------|
+|--------|-------------|--------------------|
 | shift  | shift pattern pitch | `pattern = S|"0-0/7 | amp 0.8";pattern.shift(2)`|
 | >>     | shift pattern pitch | `pattern=S|"0-0/7 | amp 0.8"; pattern >> 2`|
 | <<     | negative shift pattern pitch | `pattern=S|"0-0/7 | amp 0.8"; pattern << 2` |
