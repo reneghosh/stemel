@@ -105,6 +105,12 @@ pattern gives rise to a new pattern. Certain methods have operator shorthand ver
 | shift  | shift pattern pitch | `pattern.shift(2)`|
 | >>     | shift pattern pitch | `pattern >> 2`|
 | <<     | negative shift pattern pitch | `pattern << 2` |
+| reverse|reverse a pattern | pattern.reverse() |
+| stretch| change the step size to fit a step signature duration, as in the time frame of one step | pattern.stretch(0.5) |
+| mult n | repeat the pattern n times | pattern.mult(4) |
+| *      | repeat the pattern n times | pattern * 4 |
+| add    | concatenate two patterns together | pattern.add(other_pattern) |
+| +      | concatenate two patterns together | pattern + other_pattern |
 
 
 
