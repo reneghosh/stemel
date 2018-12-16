@@ -53,6 +53,39 @@ would generate the following structures:
   sustains: [[2, 1], [1, 1], [1, 1]]
 ```
 
+## Usage in FoxDot
+
+To use it in FoxDot code, import stemel within the current script.
+```
+from stemel import *
+```
+
+There are two way of using stemel patterns in FoxDot:
+
+1. Create patterns through the `S|` builder and send them to a FoxDot player through the
+`smlp` function, providing the instrument to use, the pattern and the step size to fit the pattern to the desired tempo:
+
+```
+Scale.default = "chromatic"
+Clock.bpm = 100
+
+bass_pattern = S|"> (0 0 0-) :1 :1 < 5 5 7 10 | amp 1.9 1.5 | lpf 120 720 120 250"
+b1 >> smlp(bass, bass_pattern, step=0.5, formant=4)
+```
+
+2. Send the pattern directly as a string to the `smls` function. This saves the step of building the pattern, but precludes using the pattern's modification functions such as shifting the pitch or concatenating
+patterns together. As with `smlp`, the function is called with the instrument to use, the pattern and the step size to fit the pattern to the desired tempo:
+```
+Scale.default = "chromatic"
+Clock.bpm = 100
+
+bass_pattern = ">(0 0 0-) :1 :1 < 5 5 7 10 | amp 1.9 1.5 | lpf 120 720 120 250"
+b1 >> smls(bass, bass_pattern, step=0.5, formant=4)
+```
+Notice that the `smlp` and `smls` functions accept all arguments that you normally
+provide to a FoxDot player. Additionally, these arguments can be embedded in the
+stemel pattern through filters.
+
 ## Language Guide
 
 ### Basic operators

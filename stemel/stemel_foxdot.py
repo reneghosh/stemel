@@ -106,19 +106,19 @@ def stemel_player(player,pattern,**args):
     opts['sus']=sustains
   return player(pitches, **opts)
 
-def smls(player,pattern,step_size, **args):
+def smls(player,pattern, step=1, **args):
   """
   alias for stemel_player for patterns as strings, thus
   needing a step size for time allotment
   """
-  return stemel_player(player, Stemel(pattern).stretch(step_size),**args)
+  return stemel_player(player, Stemel(pattern).stretch(step),**args)
 
-def smlp(player, pattern, step_size, **args):
+def smlp(player, pattern, step=1, **args):
   """
   alias for stemel_player for patterns as Stemel objects, thus
   needing no step size for time allotment
   """
-  pattern = pattern.stretch(step_size)
+  pattern = pattern.stretch(step)
   return stemel_player(player,pattern,**args)
 
 if __name__ == '__main__':
