@@ -86,6 +86,32 @@ Notice that the `smlp` and `smls` functions accept all arguments that you normal
 provide to a FoxDot player. Additionally, these arguments can be embedded in the
 stemel pattern through filters.
 
+## Building a modifying patterns
+
+stemel Patterns are built by sending a string representing the pattern, either to the `Stemel()` class constructor or the `S|` operator.
+```
+from stemel import *
+
+# these two methods of building a pattern are equivalent:
+pattern = Stemel("0 0 5")
+pattern = S|"0 0 5"
+```
+Patterns can be modified by the `Stemel` class methods. Any modification to a stemel
+pattern gives rise to a new pattern. Certain methods have operator shorthand versions.
+
+| method | description | example |
+|--------|-------------|--------------------|---------|
+| shift  | shift pattern pitch | ```pattern = S|"0-0/7 | amp 0.8"
+pattern.shift(2) ```|
+| >>     | shift pattern pitch | (S|"0-0/7 | amp 0.8") >> 2 |
+| <<     | negative shift pattern pitch | (S|"0-0/7 | amp 0.8") << 2 |
+
+
+
+
+
+
+
 ## Language Guide
 
 ### Basic operators
@@ -95,7 +121,7 @@ that inform a note's duration and sustain.
 The basic operators are:
 
 | operator | description |
-| ----| ----|
+| -------- | ----------- |
 | `(number)` | add note of midi pitch (number) |
 | `-` | carry previous note's duration one step |
 | `*` | rest for a step |
