@@ -52,6 +52,11 @@ would generate the following structures:
   durations: [[1, 1], [{'rest': 1}, {'rest': 1}], [1, {'rest': 1}]],
   sustains: [[2, 1], [1, 1], [1, 1]]
 ```
+## Installation
+
+```
+pip install stemel
+```
 
 ## Usage in FoxDot
 
