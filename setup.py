@@ -11,7 +11,7 @@ setuptools.setup(
     description="stemel polyphonic patterns language",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/stemel/python",
+    url="https://github.com/satelliteray/stemel",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
