@@ -99,7 +99,11 @@ pattern = S|"0 0 5"
 Patterns can be modified by the `Stemel` class methods. Any modification to a stemel
 pattern gives rise to a new pattern. Certain methods have operator shorthand versions.
 
+<<<<<<< HEAD
 | method | description | example (with pattern = S\|"0-0/7")|
+=======
+| method | description | example (with `pattern = S|"0-0/7 | amp 0.8" `)|
+>>>>>>> 5133be3ce8731a01f9a5e1e71c18c433ea173293
 |--------|-------------|--------------------|
 | shift  | shift pattern pitch | `pattern.shift(2)`|
 | >>     | shift pattern pitch | `pattern >> 2`|
