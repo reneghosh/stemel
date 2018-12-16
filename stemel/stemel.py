@@ -194,7 +194,7 @@ class Stemel:
     return self.add(other)
 
   def __repr__(self):
-    return "{Stemel \n\tpitches %s, \n\tdurations %s, \n\tsustains %s\n}" % (self.pitches, self.durations, self.sustains)
+    return "{stemel \n\tpitches %s, \n\tdurations %s, \n\tsustains %s\n}" % (self.pitches, self.durations, self.sustains)
 
 class Stemelcreator:
   """

@@ -1,40 +1,65 @@
 # stemel
 
-_polyphonic score player for FoxDot and Sonic Pi_
+_step sequencer expression language_
 
-**NOTE**: stemel is very much a work in progress 
-at the moment as the syntax and scope are changing.
-I'm not yet sure what form it will take when I 
-release it.
+stemel is a music notation format inspired by
+step sequencers and
+[MML](https://en.wikipedia.org/wiki/Music_Macro_Language),
+to write music in a format that's both **human readable**
+and **code-exploitable**.
+stemel makes it easy to write long sequences of melodies, with a simple syntax to
+support polyphony.
 
-A music notation format inspired by 
-step sequencers and 
-[MML](https://en.wikipedia.org/wiki/Music_Macro_Language), to write music in a format that's both **human readable** and **code-exploitable**. Stemel makes it easy to write long sequences of melodies. Chords. Counterpoint.
+## Supported platforms
+
+At the moment, stemel has a helper class to support integration with FoxDot.
+More helpers are planned in the future.
 
 ## stemel in a nutshell
 
-Stemel represents notes in the form a step
+stemel represents notes in the same way a step
 sequencer does.
 
-Let's start with an example. This is a 
-two-voice socre, with one voice inputting midi
-note 0 twice, once with a two-step duration and 
+Let's start with an example. This is a
+two-voice score, with one voice inputting midi
+note 0 twice, once with a two-step duration and
 once with a one-step duration. The other voice
-is inputting midi note 7, then resting for 
+is inputting midi note 7, then resting for
 two steps.
 
 Here's what it looks like:
-  
+
 ```
-0 - 0 / 7 * * 
+0 - 0 / 7 * *
+```
+On a step sequencer, this example would look like this:
+
+```
+|x| | |x| | |
+| | | | | | |
+| | | | | | |
+| | | | | | |
+| | | | | | |
+| | | | | | |
+| x |x| x |x|
+```
+what stemel does is generate data structures to represent
+a pattern's pitches, sustains and durations. This example
+would generate the following structures:
+
+```
+  pitches: [[0.0, 7.0], [-1, -1], [0.0, -1]],
+  durations: [[1, 1], [{'rest': 1}, {'rest': 1}], [1, {'rest': 1}]],
+  sustains: [[2, 1], [1, 1], [1, 1]]
 ```
 
-## User Guide
+## Language Guide
 
-Stemel is a musical notation format inspired by 
-step sequencers that supports polyphony.
+### Basic operators
+stemel describes a musical pattern with pitches and operators
+that inform a note's duration and sustain.
 
-The gist of it is this:
+The basic operators are:
 
 | operator | description |
 | ----| ----|
@@ -46,23 +71,65 @@ The gist of it is this:
 | `/` | start a new voice |
 
 - whitespace is optional, except after a note
-pitch (you have to be able to separate numbers)
-- any operator can be repeated multiple times 
+pitch, because pitch is expressed as a number
+- any operator can be repeated multiple times
 
-## Roadmap
+### Grouping
+Patterns can be grouped into variables and used as a reference
+further down the pattern. This allows for a more succinct
+expression of the overall pattern when one ore more patterns
+are repeated verbatim.
 
-- Add filters to support array operations on lists
-of notes such as randomization, extension, concatenation
-- Add grouping, variables, references
+To create a group, enclose it in round brackets `()`. The order
+of grouping determines the variable's reference number and can
+be used by prefixing the reference with the `:` operator.
 
-## Supported platforms
+For example, the following two stemel patterns are equivalent,
+the second one using groups to express the first one more succinctly:
 
-Stemel has two implementations in python in ruby.
-It has helpers to use it on FoxDot (python version)
-and Sonic Pi (ruby version).
+```
+0 0 5  0 0 5  0 0 5  7 7 12  7 7 12  7 7 12
 
-## Stemel in Python code
+(0 0 5) :1 :1 (7 7 12) :2 :2
+```
 
+Groups can contain other groups. This allows for making
+super-patterns that deference in cascade. For instance, the
+following two expressions are equivalent:
 
-TO DO
-.
+```
+0 7 0 7 0 8 0 7 0 7 0 8
+
+((0 7) :1 0 8) :2
+```
+
+### Filters
+
+Filters allow for adding patterns that qualify the musical
+pattern. A filter is added to a pattern by apposing an `|` operator,
+then the filter name, then a new pattern. Filters are information
+to be used by the player that will eventually execute the pattern.
+
+For example, adding amplitude information to a music pattern
+might be written as follows:
+
+```
+0 0 7 | amp 0.8 0.3 0.3
+```
+When the player encounters the pattern and receives the additional
+information provided by the amplitude filter, it might choose to
+affect each note played by the given amplitude.
+
+## A note on polyphonic pattern repetition
+
+When a pattern comprises multiple voices, certain voices
+might contain more steps than others. stemel will repeat
+a voice within the current pattern buffer to compensate,
+effectively looping it.
+
+For instance, the following two patterns are equivalent:
+```
+7 7 5 7 5 7 4 4/0 0 0 0 0 0 0 0
+
+7 7 5 7 5 7 4 4/0
+```

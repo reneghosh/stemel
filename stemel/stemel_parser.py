@@ -51,22 +51,23 @@ def ungroup(str):
   new_str = ""
   for c in str:
       if c == '(':
-           cursor += 1
-           buffer.append([])
+         cursor += 1
+         buffer.append([])
       elif c == ')':
-          if cursor >= 0:
-              groups.append(buffer[cursor])
-              buffer[cursor]=[]
-              cursor -= 1
-              if cursor <-1:
-                  cursor = -1
-              new_str += ' '
-      else:
-        new_str += c
-        # add c to all open buffers
         if cursor >= 0:
-          for i in range(0,cursor+1):
-              buffer[i].append(c)
+            groups.append(buffer[cursor])
+            buffer[cursor]=[]
+            cursor -= 1
+            if cursor <-1:
+                cursor = -1
+            new_str += ' '
+      else:
+        if c is not None:
+          new_str += c
+          # add c to all open buffers
+          if cursor >= 0:
+            for i in range(0,cursor+1):
+                buffer[i].append(c)
   replacement_buffer = []
   counter = 0
   for buff in groups:
@@ -134,5 +135,6 @@ if __name__ == '__main__':
   """
   testing method
   """
-  buffer = parse_line("((0) :1 5) :2")
-  print(buffer)
+  # buffer = parse_line("(0 0 5) :1 :1 (7 7 12) :2 :2")
+  buffer = parse_line("((0 7) :1 0 8) :2 ")
+  print(' '.join(buffer[0]))
