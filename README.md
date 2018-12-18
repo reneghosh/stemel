@@ -118,11 +118,6 @@ pattern gives rise to a new pattern. Certain methods have operator shorthand ver
 | +      | concatenate two patterns together | `pattern + other_pattern` |
 
 
-
-
-
-
-
 ## Language Guide
 
 ### Basic operators
@@ -203,3 +198,8 @@ For instance, the following two patterns are equivalent:
 
 7 7 5 7 5 7 4 4/0
 ```
+
+
+## Roadmap
+
+Next on the list: support Supercollider patterns through python/OSC.
