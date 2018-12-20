@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="stemel",
-    version="0.0.1",
+    version="0.0.2",
     author="René Ghosh",
     author_email="rene.ghosh@gmail.com",
     description="stemel polyphonic patterns language",
