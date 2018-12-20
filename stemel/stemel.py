@@ -1,5 +1,6 @@
 from stemel.stemel_parser import *
 from copy import deepcopy
+import time
 
 class Filter:
   """
@@ -168,7 +169,7 @@ class Stemel:
     for i in range(0,len(durations)):
       for j in range(0, len(durations[i])):
         if type(durations[i][j]) == type({}):
-          durations[i][j]['rest'] *= factor
+          durations[i][j]['rest'] = self.durations[i][j]['rest']*factor
         else:
           durations[i][j] *= factor
     return new_pattern
@@ -195,6 +196,24 @@ class Stemel:
 
   def __repr__(self):
     return "{stemel \n\tpitches %s, \n\tdurations %s, \n\tsustains %s\n}" % (self.pitches, self.durations, self.sustains)
+
+  def play(self, player):
+    """
+    orchestrate a playing sequence, accepting
+    a function to play each note
+    """
+    for i in range(0,len(self.pitches)):
+      duration = 0
+      for j in range(0,len(self.pitches[i])):
+        note_duration = self.durations[i][j]
+        if not (type(note_duration)==type({})):
+          note_pitch = self.pitches[i][j]
+          note_sustain = self.sustains[i][j]
+          duration = note_duration
+          player(note_pitch, note_sustain)
+        else:
+          duration = self.durations[i][j]['rest']
+      time.sleep(duration)
 
 class Stemelcreator:
   """
