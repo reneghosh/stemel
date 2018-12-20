@@ -47,21 +47,21 @@ what stemel does is generate data structures to represent
 a pattern's pitches, sustains and durations. This example
 would generate the following structures:
 
-```
+```python
   pitches: [[0.0, 7.0], [-1, -1], [0.0, -1]],
   durations: [[1, 1], [{'rest': 1}, {'rest': 1}], [1, {'rest': 1}]],
   sustains: [[2, 1], [1, 1], [1, 1]]
 ```
 ## Installation
 
-```
+```bash
 pip install stemel
 ```
 
 ## Usage in FoxDot
 
 To use it in FoxDot code, import stemel within the current script.
-```
+```python
 from stemel import *
 ```
 
@@ -70,7 +70,7 @@ There are two way of using stemel patterns in FoxDot:
 1. Create patterns through the `S|` builder and send them to a FoxDot player through the
 `smlp` function, providing the instrument to use, the pattern and the step size to fit the pattern to the desired tempo:
 
-```
+```python
 Scale.default = "chromatic"
 Clock.bpm = 100
 
@@ -80,7 +80,7 @@ b1 >> smlp(bass, bass_pattern, step=0.5, formant=4)
 
 2. Send the pattern directly as a string to the `smls` function. This saves the step of building the pattern, but precludes using the pattern's modification functions such as shifting the pitch or concatenating
 patterns together. As with `smlp`, the function is called with the instrument to use, the pattern and the step size to fit the pattern to the desired tempo:
-```
+```python
 Scale.default = "chromatic"
 Clock.bpm = 100
 
@@ -104,7 +104,7 @@ system.
 
 An example of using the `play` method to simply print notes:
 
-```
+```python
 pattern = S|">>> (0 0 0-) :1 0 0 0 < 10 7 7 7-"
 pattern.play(lambda pitch, sustain: print("play %s for %s" % (pitch, sustain)))
 ```
@@ -115,7 +115,7 @@ Execute the `stemel.scd` code within a running Supercollider instance, then the
 ## Building a modifying patterns
 
 stemel Patterns are built by sending a string representing the pattern, either to the `Stemel()` class constructor or the `S|` operator.
-```
+```python
 from stemel import *
 
 # these two methods of building a pattern are equivalent:
