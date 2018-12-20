@@ -128,7 +128,7 @@ pattern gives rise to a new pattern. Certain methods have operator shorthand ver
 
 | method | description | example (with `pattern = S\|"0-0/7"`)|
 |--------|-------------|--------------------|
-| shift  | shift pattern pitch | `pattern.shift(2)`|
+| shift  | shift pattern pitch | ```python pattern.shift(2)```|
 | >>     | shift pattern pitch | `pattern >> 2`|
 | <<     | negative shift pattern pitch | `pattern << 2` |
 | reverse|reverse a pattern | `pattern.reverse()` |
