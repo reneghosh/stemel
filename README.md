@@ -91,6 +91,27 @@ Notice that the `smlp` and `smls` functions accept all arguments that you normal
 provide to a FoxDot player. Additionally, these arguments can be embedded in the
 stemel pattern through filters.
 
+## Usage with another sound player
+
+For usages other than in FoxDot, the Stemel class has a `play` function
+that accepts a function as parameter. It will loop over the pattern and
+for every step and all notes within that step, it will call the submitted
+player function, sending it pitch and sustain information, then sleeping
+for the duration of the step.
+
+Stemel does not manage threads: the caller code must implement its own threading
+system.
+
+An example of using the `play` method to simply print notes:
+
+```
+pattern = S|">>> (0 0 0-) :1 0 0 0 < 10 7 7 7-"
+pattern.play(lambda pitch, sustain: print("play %s for %s" % (pitch, sustain)))
+```
+For a more elaborate example using Supercollider over OSC, see the `examples` folder.
+Execute the `stemel.scd` code within a running Supercollider instance, then the
+`supercollider.py` example from the command line.
+
 ## Building a modifying patterns
 
 stemel Patterns are built by sending a string representing the pattern, either to the `Stemel()` class constructor or the `S|` operator.
