@@ -219,8 +219,3 @@ For instance, the following two patterns are equivalent:
 
 7 7 5 7 5 7 4 4/0
 ```
-
-
-## Roadmap
-
-Next on the list: support Supercollider patterns through python/OSC.
