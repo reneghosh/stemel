@@ -166,8 +166,10 @@ class Stemel:
   def stretch(self, factor):
     new_pattern = deepcopy(self)
     durations = new_pattern.durations
+    sustains = new_pattern.sustains
     for i in range(0,len(durations)):
       for j in range(0, len(durations[i])):
+        sustains[i][j] *= factor
         if type(durations[i][j]) == type({}):
           durations[i][j]['rest'] = self.durations[i][j]['rest']*factor
         else:
