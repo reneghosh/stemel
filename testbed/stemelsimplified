@@ -1,0 +1,44 @@
+from functools import *
+a = "005AB/0-0-->0"
+
+def s2l(str):
+    return list(map(lambda c: c, str))
+
+notes = ['0','1','2','3','4','5','6','7','8','9','A','B']
+
+#
+def generate_sequencer(stream):
+    octave = 0
+    score = [[]]
+    voice_cursor=0
+    note_cursor=-1
+    seq_length = 0
+    for c in stream:
+        if c=='/':
+            score.append([])
+            voice_cursor += 1
+            note_cursor=-1
+        elif c=='*':
+            score[voice_cursor].append([-1,{'rest':1},1])
+        elif c=='-':
+            score[voice_cursor][note_cursor][2]+=1
+            score[voice_cursor].append([-1,{'rest':1},1])
+        elif c=='>':
+            octave += 1
+        elif c=='<':
+            octave = octave - 1 if octave >0 else 0
+        elif c in notes:
+            score[voice_cursor].append([notes.index(c)+12*octave,1,1])
+            note_cursor+=1
+        if len(score[voice_cursor])>seq_length:
+            seq_length=len(score[voice_cursor])
+        print(len(score[voice_cursor]))
+    transposed_score = []
+    for voice in score:
+        transposed_voice = []
+        transposed_score.append(transposed_voice)
+        for i in range(0,3):
+            transposed_voice.append(list(map(lambda x: x[i],voice)))
+    return transposed_score
+
+print(generate_sequencer(a)[1])
